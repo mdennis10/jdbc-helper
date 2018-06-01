@@ -4,7 +4,6 @@ import com.dennis.jdbc.extension.core.annotation.Column;
 import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.dennis.jdbc.extension.core.exception.UnsupportedTypeException;
 import com.google.common.base.Strings;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.ResultSet;
@@ -14,7 +13,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class DatabaseHelper_SupportedDataTypesTest {
     @Test
     public void setFieldDoubleDataTypeTest() throws SQLException {

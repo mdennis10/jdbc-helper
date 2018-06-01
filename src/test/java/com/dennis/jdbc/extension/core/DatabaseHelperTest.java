@@ -4,7 +4,6 @@ import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.dennis.jdbc.extension.core.exception.NameConfigNotFoundException;
 import com.dennis.jdbc.extension.core.exception.NoColumnAnnotationException;
 import com.google.common.base.Strings;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -16,7 +15,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
-@Ignore
 public class DatabaseHelperTest {
 
     @Test

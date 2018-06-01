@@ -3,7 +3,6 @@ package com.dennis.jdbc.extension.core.config;
 import com.dennis.jdbc.extension.core.exception.ConfigurationException;
 import com.dennis.jdbc.extension.core.util.RefStreamsUtil;
 import com.google.common.base.Optional;
-import java8.util.function.Consumer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,14 +22,11 @@ public class DbConfigurationFactory {
             throw new ConfigurationException("unable to load configuration properties file");
         }
         Set<String> profiles = loader.getProfiles(prop.get());
-        RefStreamsUtil.createStream(profiles).forEach(new Consumer<String>() {
-            @Override
-            public void accept(String profile) {
-                Optional<DbConfiguration> config = loader.getDbConfiguration(profile, prop.get());
-                if (!config.isPresent()) return;
+        RefStreamsUtil.createStream(profiles).forEach(profile -> {
+            Optional<DbConfiguration> config = loader.getDbConfiguration(profile, prop.get());
+            if (!config.isPresent()) return;
 
-                configurationMap.put(profile, config.get());
-            }
+            configurationMap.put(profile, config.get());
         });
     }
 

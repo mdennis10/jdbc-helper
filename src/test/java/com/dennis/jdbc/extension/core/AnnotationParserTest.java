@@ -3,7 +3,6 @@ package com.dennis.jdbc.extension.core;
 import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.List;
@@ -11,7 +10,6 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 
-@Ignore
 public class AnnotationParserTest {
     @Test
     public void getColumnNamesTest() {

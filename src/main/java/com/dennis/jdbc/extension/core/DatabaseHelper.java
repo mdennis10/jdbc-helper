@@ -9,7 +9,6 @@ import com.dennis.jdbc.extension.core.util.RefStreamsUtil;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import java8.util.function.Consumer;
 
 import java.lang.reflect.Field;
 import java.sql.Connection;
@@ -174,12 +173,7 @@ public class DatabaseHelper {
                 final T entity = clazz.newInstance();
                 RefStreamsUtil
                         .createStream(typeDataList)
-                        .forEach(new Consumer<TypeData>() {
-                            @Override
-                            public void accept(TypeData typeData) {
-                                DatabaseHelper.this.setField(resultSet, entity, typeData);
-                            }
-                        });
+                        .forEach(typeData -> DatabaseHelper.this.setField(resultSet, entity, typeData));
                 result.add(entity);
             }
             return result;

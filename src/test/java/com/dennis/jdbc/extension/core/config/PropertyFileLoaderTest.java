@@ -3,7 +3,6 @@ package com.dennis.jdbc.extension.core.config;
 import com.dennis.jdbc.extension.core.exception.NameConfigNotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.HashSet;
@@ -14,7 +13,6 @@ import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-@Ignore
 public class PropertyFileLoaderTest {
     @Test
     public void getProfileTest() {

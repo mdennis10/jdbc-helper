@@ -6,7 +6,6 @@ import com.dennis.jdbc.extension.core.util.DbConfigurationUtil;
 import com.google.common.base.Optional;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.sql.Connection;
@@ -16,7 +15,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import static junit.framework.TestCase.*;
-@Ignore
+
 public class DatabaseHelper_IntegrationTest {
     private static String author = "Mario Dennis";
     private final String nameConfig = "myprofile";

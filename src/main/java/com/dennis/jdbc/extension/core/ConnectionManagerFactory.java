@@ -4,7 +4,6 @@ import com.dennis.jdbc.extension.core.config.DbConfiguration;
 import com.dennis.jdbc.extension.core.config.DbConfigurationFactory;
 import com.dennis.jdbc.extension.core.exception.NameConfigNotFoundException;
 import com.dennis.jdbc.extension.core.util.RefStreamsUtil;
-import java8.util.function.Consumer;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -16,13 +15,10 @@ public class ConnectionManagerFactory {
     protected ConnectionManagerFactory() {
         this.connectionMap = new HashMap<String, ConnectionManager>();
         Set<String> profiles = DbConfigurationFactory.getProfiles();
-        RefStreamsUtil.createStream(profiles).forEach(new Consumer<String>() {
-            @Override
-            public void accept(String profile) {
-                DbConfiguration config = DbConfigurationFactory.getDbConfiguration(profile);
-                if (config == null) return;
-                connectionMap.put(profile, ConnectionManagerFactory.this.createConnectionManager(config));
-            }
+        RefStreamsUtil.createStream(profiles).forEach(profile -> {
+            DbConfiguration config = DbConfigurationFactory.getDbConfiguration(profile);
+            if (config == null) return;
+            connectionMap.put(profile, ConnectionManagerFactory.this.createConnectionManager(config));
         });
     }
 

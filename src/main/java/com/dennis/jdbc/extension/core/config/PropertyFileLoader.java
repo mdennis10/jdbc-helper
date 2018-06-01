@@ -6,7 +6,6 @@ import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import java8.util.function.Consumer;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -78,23 +77,20 @@ public class PropertyFileLoader {
     protected Set<String> getProfiles(Properties prop) {
         Set<String> propNames = prop.stringPropertyNames();
         final Set<String> profile = new HashSet<String>();
-        RefStreamsUtil.createStream(propNames).forEach(new Consumer<String>() {
-            @Override
-            public void accept(String name) {
-                List<String> result = Lists.newArrayList(Splitter.on("jdbc")
-                        .trimResults()
-                        .split(name)
-                );
-                String key = result.get(0);
-                if (!Strings.isNullOrEmpty(key)) {
-                    if (key.charAt(key.length() - 1) == '.') {
-                        key = key.substring(0, key.length() - 1);
-                    }
-                    if (key.charAt(0) == '.') {
-                        key = key.substring(1, key.length());
-                    }
-                    profile.add(key);
+        RefStreamsUtil.createStream(propNames).forEach(name -> {
+            List<String> result = Lists.newArrayList(Splitter.on("jdbc")
+                    .trimResults()
+                    .split(name)
+            );
+            String key = result.get(0);
+            if (!Strings.isNullOrEmpty(key)) {
+                if (key.charAt(key.length() - 1) == '.') {
+                    key = key.substring(0, key.length() - 1);
                 }
+                if (key.charAt(0) == '.') {
+                    key = key.substring(1, key.length());
+                }
+                profile.add(key);
             }
         });
         profile.add("default");

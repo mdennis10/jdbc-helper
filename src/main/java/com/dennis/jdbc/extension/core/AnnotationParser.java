@@ -8,8 +8,6 @@ import com.dennis.jdbc.extension.core.util.RefStreamsUtil;
 import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import java8.util.function.Function;
-import java8.util.function.Predicate;
 import java8.util.stream.Collectors;
 
 import java.lang.reflect.Field;
@@ -20,16 +18,8 @@ public class AnnotationParser {
     protected static <T> List<TypeData> getColumnNames(Class<T> clazz) {
         Field[] fields = clazz.getDeclaredFields();
         List<TypeData> columns = RefStreamsUtil.createStream(fields)
-                .filter(new Predicate<Field>() {
-                    public boolean test(Field x) {
-                        return x.getAnnotation(Column.class) != null;
-                    }
-                })
-                .map(new Function<Field, TypeData>() {
-                    public TypeData apply(Field x) {
-                        return mapTypeData(x);
-                    }
-                }).collect(Collectors.<TypeData>toList());
+                .filter(x -> x.getAnnotation(Column.class) != null)
+                .map(x -> mapTypeData(x)).collect(Collectors.toList());
         return columns;
     }
 
