@@ -1,12 +1,13 @@
 package com.dennis.jdbc.extension.core.util;
 
-import org.junit.Test;
+
+import org.junit.jupiter.api.Test;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 public class ConnectionUtilTest {

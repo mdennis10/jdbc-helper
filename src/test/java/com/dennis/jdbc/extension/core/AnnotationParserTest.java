@@ -3,11 +3,11 @@ package com.dennis.jdbc.extension.core;
 import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public class AnnotationParserTest {

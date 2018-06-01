@@ -4,7 +4,8 @@ import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.dennis.jdbc.extension.core.exception.NameConfigNotFoundException;
 import com.dennis.jdbc.extension.core.exception.NoColumnAnnotationException;
 import com.google.common.base.Strings;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,7 +13,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 public class DatabaseHelperTest {
@@ -56,13 +57,14 @@ public class DatabaseHelperTest {
         assertEquals("Mario Dennis", book.getAuthor());
     }
 
-    @Test(expected = NoColumnAnnotationException.class)
+    @Test
     public void parseEntityNoColumnAnnotationTest() throws SQLException {
-        final ResultSet mockResultSet = mock(ResultSet.class);
+        ResultSet mockResultSet = mock(ResultSet.class);
         when(mockResultSet.isClosed()).thenReturn(false);
 
-        final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.parseEntity(mockResultSet, Car.class);
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        Executable executable = () -> helper.parseEntity(mockResultSet, Car.class);
+        assertThrows(NoColumnAnnotationException.class, executable);
     }
 
     @Test
@@ -79,46 +81,61 @@ public class DatabaseHelperTest {
         assertEquals("John", book.getAuthor());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryNoSqlSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQuery(Book.class, "");
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> helper.executeQuery(Book.class, "")
+        );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryNullSqlSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQuery(Book.class, null);
+        assertThrows(IllegalArgumentException.class, () -> helper.executeQuery(Book.class, null));
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryCollectionNoSqlSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQueryCollection(Book.class, "");
+        assertThrows(IllegalArgumentException.class,() -> helper.executeQueryCollection(Book.class, ""));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryCollectionNullSqlSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQueryCollection(Book.class, null);
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> helper.executeQueryCollection(Book.class, null)
+        );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryCollectionNullEntityTypeSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQueryCollection(null, "select * from Book");
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> helper.executeQueryCollection(null, "select * from Book")
+        );
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void executeQueryNullEntityTypeSupplied() {
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.executeQuery(null, "select * from Book");
+        assertThrows(
+            IllegalArgumentException.class,
+            () -> helper.executeQuery(null, "select * from Book")
+        );
     }
 
-    @Test(expected = NameConfigNotFoundException.class)
+    @Test
     public void executeQueryCollectionInvalidNameConfigTest() {
         final DatabaseHelper helper = DatabaseHelper.getInstance("some-invalid-name");
-        helper.executeQueryCollection(Book.class, "select * from Book");
+        assertThrows(
+            NameConfigNotFoundException.class,
+            () -> helper.executeQueryCollection(Book.class, "select * from Book")
+        );
     }
 }

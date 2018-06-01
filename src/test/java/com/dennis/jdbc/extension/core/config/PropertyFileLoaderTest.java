@@ -3,13 +3,14 @@ package com.dennis.jdbc.extension.core.config;
 import com.dennis.jdbc.extension.core.exception.NameConfigNotFoundException;
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -82,7 +83,7 @@ public class PropertyFileLoaderTest {
         assertFalse(Strings.isNullOrEmpty(config.get().getPassword()));
     }
 
-    @Test(expected = NameConfigNotFoundException.class)
+    @Test
     public void getDbConfiguration_InvalidProfileTest() {
         PropertyFileLoader loader = new PropertyFileLoader();
         Properties properties = mock(Properties.class);
@@ -92,6 +93,7 @@ public class PropertyFileLoaderTest {
         when(properties.getProperty("myprofile.jdbc.password", "")).thenReturn("some-password");
         when(properties.size()).thenReturn(4);
 
-        loader.getDbConfiguration("some-invalid-profile", properties);
+        Executable executable = () -> loader.getDbConfiguration("some-invalid-profile", properties);
+        assertThrows(NameConfigNotFoundException.class, executable);
     }
 }

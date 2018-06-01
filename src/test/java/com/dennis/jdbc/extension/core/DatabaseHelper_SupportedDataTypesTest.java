@@ -4,12 +4,13 @@ import com.dennis.jdbc.extension.core.annotation.Column;
 import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.dennis.jdbc.extension.core.exception.UnsupportedTypeException;
 import com.google.common.base.Strings;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -256,14 +257,16 @@ public class DatabaseHelper_SupportedDataTypesTest {
         assertEquals(expected, entity.booleanField.booleanValue());
     }
 
-    @Test(expected = UnsupportedTypeException.class)
+    @Test
     public void setFieldThrowsUnsupportedTestException() {
-        final UnsupportedTypeEntity entity = new UnsupportedTypeEntity();
+        UnsupportedTypeEntity entity = new UnsupportedTypeEntity();
         entity.book = new Book();
 
-        final TypeData typeData = new TypeData("name", Book.class, "book");
-        final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.setField(mock(ResultSet.class), entity, typeData);
+        TypeData typeData = new TypeData("name", Book.class, "book");
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+
+        Executable executable = () -> helper.setField(mock(ResultSet.class), entity, typeData);
+        assertThrows(UnsupportedTypeException.class, executable);
     }
 
     @Test
@@ -502,14 +505,16 @@ public class DatabaseHelper_SupportedDataTypesTest {
         assertEquals("127", result);
     }
 
-    @Test(expected = UnsupportedTypeException.class)
+    @Test
     public void convertParamToStringUnsupportedTypeTest() {
         final UnsupportedTypeEntity entity = new UnsupportedTypeEntity();
         entity.book = new Book();
 
         final TypeData typeData = new TypeData("name", Book.class, "book");
         final DatabaseHelper helper = DatabaseHelper.getInstance();
-        helper.convertParamToString(UnsupportedTypeEntity.class, entity, typeData);
+
+        Executable executable = () -> helper.convertParamToString(UnsupportedTypeEntity.class, entity, typeData);
+        assertThrows(UnsupportedTypeException.class, executable);
     }
 
     private class SetByteWrapperFieldEntity {
