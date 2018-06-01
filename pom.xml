@@ -6,7 +6,7 @@
 
     <groupId>com.dennis.jdbc.extension</groupId>
     <artifactId>jdbc-extension</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.1.1</version>
     <properties>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>
@@ -19,13 +19,6 @@
             <version>1.16.20</version>
             <scope>provided</scope>
         </dependency>
-        <!--<dependency>-->
-            <!--<groupId>junit</groupId>-->
-            <!--<artifactId>junit</artifactId>-->
-            <!--<version>4.12</version>-->
-            <!--<scope>test</scope>-->
-        <!--</dependency>-->
-
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-api</artifactId>
