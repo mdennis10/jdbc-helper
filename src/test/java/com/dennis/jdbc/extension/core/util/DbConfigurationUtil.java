@@ -19,7 +19,9 @@ public class DbConfigurationUtil {
                 "sa",
                 "",
                 "jdbc:h2:file:~/test",
-                "org.h2.Driver"
+                "org.h2.Driver",
+                15,
+                5
         );
     }
 

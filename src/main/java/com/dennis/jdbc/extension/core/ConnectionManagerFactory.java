@@ -34,11 +34,6 @@ public class ConnectionManagerFactory {
     }
 
     private ConnectionManager createConnectionManager(DbConfiguration config) {
-        return new C3p0ConnectionManagerImpl(
-                config.getUrl(),
-                config.getUsername(),
-                config.getPassword(),
-                config.getDriverClassName()
-        );
+        return new C3p0ConnectionManagerImpl(config);
     }
 }

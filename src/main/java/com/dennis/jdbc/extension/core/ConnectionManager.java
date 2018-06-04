@@ -15,5 +15,7 @@ public interface ConnectionManager {
 
     int getMaxPoolSize();
 
+    int getMinPoolSize();
+
     int getMaxStatements();
 }

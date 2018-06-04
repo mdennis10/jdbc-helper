@@ -237,4 +237,44 @@ public class DatabaseHelper {
             throw new UnsupportedTypeException(typeData.getFieldType());
         }
     }
+
+    public final int getMaxConnectionPoolSize() {
+        synchronized (profile) {
+            return ConnectionManagerFactory
+                    .getConnectionManager(profile)
+                    .getMaxPoolSize();
+        }
+    }
+
+    public final int getMinConnectionPoolSize() {
+        synchronized (profile) {
+            return ConnectionManagerFactory
+                    .getConnectionManager(profile)
+                    .getMinPoolSize();
+        }
+    }
+
+    public final String getDatabaseUser() {
+        synchronized (profile) {
+            return ConnectionManagerFactory
+                    .getConnectionManager(profile)
+                    .getDatabaseUser();
+        }
+    }
+
+    public String getJdbcUrl() {
+        synchronized (profile) {
+            return ConnectionManagerFactory
+                    .getConnectionManager(profile)
+                    .getJbcUrl();
+        }
+    }
+
+    public String getDriverClassName() {
+        synchronized (profile) {
+            return ConnectionManagerFactory
+                    .getConnectionManager(profile)
+                    .getDriverClassName();
+        }
+    }
 }

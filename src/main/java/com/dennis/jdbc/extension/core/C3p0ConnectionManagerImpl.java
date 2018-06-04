@@ -1,5 +1,6 @@
 package com.dennis.jdbc.extension.core;
 
+import com.dennis.jdbc.extension.core.config.DbConfiguration;
 import com.google.common.base.Optional;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -8,18 +9,18 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 public class C3p0ConnectionManagerImpl implements ConnectionManager {
-    private ComboPooledDataSource dataSource;
+    private final ComboPooledDataSource dataSource;
 
-    protected C3p0ConnectionManagerImpl(String url, String username, String password, String driverClassName) {
+    protected  C3p0ConnectionManagerImpl(DbConfiguration config) {
         try {
             ComboPooledDataSource c3p0 = new ComboPooledDataSource();
-            c3p0.setDriverClass(driverClassName); //loads the jdbc driver
-            c3p0.setJdbcUrl(url);
-            c3p0.setUser(username);
-            c3p0.setPassword(password);
+            c3p0.setDriverClass(config.getDriverClassName()); //loads the jdbc driver
+            c3p0.setJdbcUrl(config.getUrl());
+            c3p0.setUser(config.getUsername());
+            c3p0.setPassword(config.getPassword());
 
-            c3p0.setMinPoolSize(5);
-            c3p0.setMaxPoolSize(15);
+            c3p0.setMinPoolSize(config.getMinPoolSize());
+            c3p0.setMaxPoolSize(config.getMaxPoolSize());
             dataSource = c3p0;
         } catch (PropertyVetoException e) {
             throw new RuntimeException(e);
@@ -56,6 +57,11 @@ public class C3p0ConnectionManagerImpl implements ConnectionManager {
     @Override
     public int getMaxPoolSize() {
         return this.dataSource.getMaxPoolSize();
+    }
+
+    @Override
+    public int getMinPoolSize() {
+        return this.dataSource.getMinPoolSize();
     }
 
     @Override

@@ -57,7 +57,9 @@ public class PropertyFileLoader {
                     prop.getProperty("jdbc.username"),
                     prop.getProperty("jdbc.password", ""),
                     prop.getProperty("jdbc.url"),
-                    prop.getProperty("jdbc.driver")
+                    prop.getProperty("jdbc.driver"),
+                    parseIntPropertyValue(prop,"jdbc.pool.max-size", 15),
+                    parseIntPropertyValue(prop,"jdbc.pool.min-size", 8)
             );
             return Optional.of(config);
         } else {
@@ -68,12 +70,24 @@ public class PropertyFileLoader {
                     prop.getProperty(String.format("%s.jdbc.username", profile)),
                     prop.getProperty(String.format("%s.jdbc.password", profile), ""),
                     prop.getProperty(String.format("%s.jdbc.url", profile)),
-                    prop.getProperty(String.format("%s.jdbc.driver", profile))
+                    prop.getProperty(String.format("%s.jdbc.driver", profile)),
+                    parseIntPropertyValue(prop, String.format("%s.jdbc.pool.max-size", profile), 15),
+                    parseIntPropertyValue(prop, String.format("%s.jdbc.pool.min-size", profile), 8)
             );
             return Optional.of(config);
         }
     }
 
+    private int parseIntPropertyValue(Properties prop, String property, int defaultValue) {
+        try {
+            if(prop == null || prop.size() == 0)
+                return defaultValue;
+            String value = prop.getProperty(property, Integer.toString(defaultValue));
+            return Integer.valueOf(value);
+        } catch (NumberFormatException e) {
+            throw e;
+        }
+    }
     protected Set<String> getProfiles(Properties prop) {
         Set<String> propNames = prop.stringPropertyNames();
         final Set<String> profile = new HashSet<String>();

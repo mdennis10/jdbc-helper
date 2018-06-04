@@ -6,7 +6,7 @@
 
     <groupId>com.dennis.jdbc.extension</groupId>
     <artifactId>jdbc-extension</artifactId>
-    <version>1.1.1</version>
+    <version>1.2.1</version>
     <properties>
         <junit.jupiter.version>5.2.0</junit.jupiter.version>
         <junit.platform.version>1.2.0</junit.platform.version>

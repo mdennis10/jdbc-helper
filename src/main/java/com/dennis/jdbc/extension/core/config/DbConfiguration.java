@@ -19,4 +19,10 @@ public class DbConfiguration {
 
     @Setter(AccessLevel.NONE)
     private String driverClassName;
+
+    @Setter(AccessLevel.NONE)
+    private int maxPoolSize;
+
+    @Setter(AccessLevel.NONE)
+    private int minPoolSize;
 }

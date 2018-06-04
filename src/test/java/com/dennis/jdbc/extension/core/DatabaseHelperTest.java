@@ -138,4 +138,61 @@ public class DatabaseHelperTest {
             () -> helper.executeQueryCollection(Book.class, "select * from Book")
         );
     }
+
+    @Test public void getMaxConnectionPoolSizeTest () {
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        assertTrue(helper.getMaxConnectionPoolSize() > 0, "Invalid connection pool size");
+        assertEquals(28,  helper.getMaxConnectionPoolSize());
+    }
+
+    @Test public void getMaxConnectionPoolSizeByProfileTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance("myprofile");
+        assertTrue(helper.getMaxConnectionPoolSize() > 0, "Invalid connection pool size");
+        assertEquals(25, helper.getMaxConnectionPoolSize());
+    }
+
+    @Test public void getMinConnectionPoolSizeTest () {
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        assertTrue(helper.getMinConnectionPoolSize() > 0, "Invalid connection pool size");
+        assertEquals(8,helper.getMinConnectionPoolSize());
+
+    }
+
+    @Test public void getMinConnectionPoolSizeByProfileTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance("myprofile");
+        int min = helper.getMinConnectionPoolSize();
+        assertTrue(min > 0, "Invalid connection pool size");
+        assertEquals(10,min);
+    }
+
+    @Test public void getDatabaseUserByProfileTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance("myprofile");
+        assertFalse(Strings.isNullOrEmpty(helper.getDatabaseUser()));
+    }
+
+    @Test public void getDatabaseUserTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        assertFalse(Strings.isNullOrEmpty(helper.getDatabaseUser()));
+    }
+
+    @Test public void getDatabaseUrlByProfileTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance("myprofile");
+        assertFalse(Strings.isNullOrEmpty(helper.getJdbcUrl()));
+    }
+
+    @Test public void getDatabaseUrlTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        assertFalse(Strings.isNullOrEmpty(helper.getJdbcUrl()));
+    }
+
+    @Test public void getDriverClassNameByProfileTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance("myprofile");
+        assertFalse(Strings.isNullOrEmpty(helper.getDriverClassName()));
+    }
+
+    @Test public void getDriverClassNameTest() {
+        DatabaseHelper helper = DatabaseHelper.getInstance();
+        assertFalse(Strings.isNullOrEmpty(helper.getDriverClassName()));
+    }
+
 }
