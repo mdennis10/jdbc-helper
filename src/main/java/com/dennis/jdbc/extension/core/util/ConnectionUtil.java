@@ -1,13 +1,16 @@
 package com.dennis.jdbc.extension.core.util;
 
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Data
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConnectionUtil {
-    private ConnectionUtil() {
-    }
-
     public static void close(Connection connection) {
         if (isClosed(connection))
             return;

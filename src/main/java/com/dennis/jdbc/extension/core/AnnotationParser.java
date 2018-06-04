@@ -1,13 +1,10 @@
 package com.dennis.jdbc.extension.core;
 
 import com.dennis.jdbc.extension.core.annotation.Column;
-import com.dennis.jdbc.extension.core.annotation.Table;
 import com.dennis.jdbc.extension.core.annotation.TypeData;
 import com.dennis.jdbc.extension.core.exception.NoColumnAnnotationException;
 import com.dennis.jdbc.extension.core.util.RefStreamsUtil;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 import java8.util.stream.Collectors;
 
 import java.lang.reflect.Field;
@@ -23,14 +20,6 @@ public class AnnotationParser {
         return columns;
     }
 
-    protected static <T> Optional<String> getTableName(Class<T> clazz) {
-        Preconditions.checkArgument(clazz != null, "Class type not supplied");
-        Table table = clazz.getAnnotation(Table.class);
-        if (table == null || Strings.isNullOrEmpty(table.name())) {
-            return Optional.absent();
-        }
-        return Optional.of(table.name());
-    }
 
     protected static TypeData mapTypeData(Field field) {
         Preconditions.checkNotNull(field);

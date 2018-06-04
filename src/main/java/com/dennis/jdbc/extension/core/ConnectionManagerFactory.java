@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-public class ConnectionManagerFactory {
+public final class ConnectionManagerFactory {
     private static Map<String, ConnectionManager> connectionMap;
 
     protected ConnectionManagerFactory() {

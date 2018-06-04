@@ -11,7 +11,7 @@ import java.sql.ResultSet;
 
 @Data
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
-public class ExecutionResult {
+public final class ExecutionResult {
     @Setter(AccessLevel.NONE)
     private Connection connection;
 

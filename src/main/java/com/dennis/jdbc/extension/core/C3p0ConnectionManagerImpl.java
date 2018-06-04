@@ -8,10 +8,10 @@ import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class C3p0ConnectionManagerImpl implements ConnectionManager {
+public final class C3p0ConnectionManagerImpl implements ConnectionManager {
     private final ComboPooledDataSource dataSource;
 
-    protected  C3p0ConnectionManagerImpl(DbConfiguration config) {
+    protected C3p0ConnectionManagerImpl(DbConfiguration config) {
         try {
             ComboPooledDataSource c3p0 = new ComboPooledDataSource();
             c3p0.setDriverClass(config.getDriverClassName()); //loads the jdbc driver

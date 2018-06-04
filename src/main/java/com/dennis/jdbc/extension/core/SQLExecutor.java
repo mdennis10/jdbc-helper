@@ -3,12 +3,17 @@ package com.dennis.jdbc.extension.core;
 import com.dennis.jdbc.extension.core.exception.ConnectionException;
 import com.dennis.jdbc.extension.core.util.ConnectionUtil;
 import com.google.common.base.Preconditions;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+@Data
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public final class SQLExecutor {
 
     private static void parseParameters(PreparedStatement statement, String... params) throws SQLException {

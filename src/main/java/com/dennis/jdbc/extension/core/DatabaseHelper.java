@@ -17,7 +17,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DatabaseHelper {
+public final class DatabaseHelper {
     private static DatabaseHelper instance;
     private static String profile;
     private final SQLExecutor executor;
@@ -26,24 +26,55 @@ public class DatabaseHelper {
         this.executor = new SQLExecutor();
     }
 
+    /**
+     * Get singleton instance of DatabaseHelper using the
+     * default connection settings profile.
+     * @author Mario Dennis
+     * @return DatabaseHelper instance
+     */
     public static DatabaseHelper getInstance() {
         return getInstance("default");
     }
 
-    public static DatabaseHelper getInstance(String nameConfig) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(nameConfig));
-        profile = nameConfig;
+    /**
+     * Get singleton instance of Database using the
+     * define connection settings profile.
+     * @author Mario Dennis
+     * @param connectionProfile
+     * @return DatabaseHelper instance
+     */
+    public static DatabaseHelper getInstance(String connectionProfile) {
+        Preconditions.checkArgument(!Strings.isNullOrEmpty(connectionProfile));
+        profile = connectionProfile;
         if (instance == null) {
             instance = new DatabaseHelper();
         }
         return instance;
     }
 
+    /**
+     * Execute a read operation sql query that
+     * return a single row.
+     * @author Mario Dennis
+     * @param clazz - entity class type for result set parsing
+     * @param sql - sql query to execute
+     * @param params - parameters used in sql query
+     * @return DatabaseHelper instance
+     */
     public <T> Optional<T> executeQuery(Class<T> clazz, String sql, String... params) {
         List<T> result = executeQueryCollection(clazz, sql, params);
         return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.<T>absent();
     }
 
+    /**
+     * Execute a read operation sql query that
+     * return a multiple rows.
+     * @author Mario Dennis
+     * @param clazz - entity class type for result set parsing
+     * @param sql - sql query to execute
+     * @param params - parameters used in sql query
+     * @return DatabaseHelper instance
+     */
     public <T> List<T> executeQueryCollection(Class<T> clazz, String sql, String... params) {
         Preconditions.checkArgument(clazz != null, "clazz type not supplied");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql));
@@ -66,6 +97,13 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Execute query that modifies rows.
+     * @author Mario Dennis
+     * @param sql - sql query to execute
+     * @param params - parameters used in sql query
+     * @return rows affected
+     */
     public int executeUpdateQuery(String sql, String... params) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql));
         Optional<Connection> connection;
@@ -131,11 +169,6 @@ public class DatabaseHelper {
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void removeLastCharacter(StringBuilder builder, int index, char charToRemove) {
-        if (builder.charAt(index) == charToRemove)
-            builder.deleteCharAt(index);
     }
 
     protected void close(ExecutionResult executionResult) {
@@ -238,6 +271,12 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Get the maximum connection the connection pool
+     * will retain.
+     * @author Mario Dennis
+     * @return connection pool max size
+     */
     public final int getMaxConnectionPoolSize() {
         synchronized (profile) {
             return ConnectionManagerFactory
@@ -246,6 +285,12 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Get minimum connection the connection pool
+     * contains at any given time.
+     * @author Mario Dennis
+     * @return connection pool min size
+     */
     public final int getMinConnectionPoolSize() {
         synchronized (profile) {
             return ConnectionManagerFactory
@@ -254,6 +299,11 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Get database username
+     * @author Mario Dennis
+     * @return username
+     */
     public final String getDatabaseUser() {
         synchronized (profile) {
             return ConnectionManagerFactory
@@ -262,6 +312,11 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Get jdbc database url
+     * @author Mario Dennis
+     * @return jdbc url
+     */
     public String getJdbcUrl() {
         synchronized (profile) {
             return ConnectionManagerFactory
@@ -270,6 +325,11 @@ public class DatabaseHelper {
         }
     }
 
+    /**
+     * Get jdbc class driver name
+     * @author Mario Dennis
+     * @return driver class name
+     */
     public String getDriverClassName() {
         synchronized (profile) {
             return ConnectionManagerFactory

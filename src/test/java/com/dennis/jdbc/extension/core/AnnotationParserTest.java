@@ -1,7 +1,6 @@
 package com.dennis.jdbc.extension.core;
 
 import com.dennis.jdbc.extension.core.annotation.TypeData;
-import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import org.junit.jupiter.api.Test;
 
@@ -22,18 +21,4 @@ public class AnnotationParserTest {
         assertTrue(data.getFieldType() == String.class);
         assertEquals("author", data.getFieldName());
     }
-
-    @Test
-    public void getTableNameTest() {
-        Optional<String> tableName = AnnotationParser.getTableName(Book.class);
-        assertTrue(tableName.isPresent());
-        assertEquals("Book", tableName.get());
-    }
-
-    @Test
-    public void getTableNameNoTableAnnotationTest() {
-        Optional<String> tableName = AnnotationParser.getTableName(Car.class);
-        assertFalse(tableName.isPresent());
-    }
-
 }
