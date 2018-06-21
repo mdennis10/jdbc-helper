@@ -7,10 +7,12 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="jdbc-extension" />
+        <module name="jdbc-helper" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel>
-      <module name="jdbc-extension-core" target="1.7" />
+      <module name="jdbc-extension-connection-pool" target="1.8" />
+      <module name="jdbc-extension-core" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>
