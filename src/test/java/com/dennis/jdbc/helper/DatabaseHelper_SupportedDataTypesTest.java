@@ -9,6 +9,7 @@ import org.junit.jupiter.api.function.Executable;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
@@ -29,6 +30,8 @@ public class DatabaseHelper_SupportedDataTypesTest {
         helper.setField(mockResultSet, entity, typeData);
         assertEquals(expected, entity.doubleField, 0.01);
     }
+
+
 
     @Test
     public void setFieldDoubleWrapperDataTypeTest() throws SQLException {
@@ -517,6 +520,21 @@ public class DatabaseHelper_SupportedDataTypesTest {
         assertThrows(UnsupportedTypeException.class, executable);
     }
 
+    @Test
+    public void setFieldDateDateType() throws SQLException {
+        SetDateFieldEntity entity = new SetDateFieldEntity();
+        Date expected = new Date();
+
+        String columnName = "name";
+        TypeData typeData = new TypeData(columnName, Date.class, "date");
+        ResultSet mockResultSet = mock(ResultSet.class);
+        when(mockResultSet.getDate(columnName)).thenReturn(new java.sql.Date(expected.getTime()));
+
+
+        DatabaseHelper.getInstance().setField(mockResultSet, entity, typeData);
+        assertEquals(expected, entity.date);
+    }
+
     private class SetByteWrapperFieldEntity {
         @Column(name = "name")
         private Byte byteField;
@@ -605,5 +623,10 @@ public class DatabaseHelper_SupportedDataTypesTest {
     private class UnsupportedTypeEntity {
         @Column(name = "name")
         private Book book;
+    }
+
+    private class SetDateFieldEntity {
+        @Column(name = "name")
+        private Date date;
     }
 }

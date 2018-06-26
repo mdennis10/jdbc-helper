@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public final class DatabaseHelper {
@@ -266,6 +267,9 @@ public final class DatabaseHelper {
         } else if (typeData.getFieldType() == byte.class || typeData.getFieldType() == Byte.class) {
             byte value = resultSet.getByte(typeData.getColumnName());
             field.set(entity, value);
+        } else if(typeData.getFieldType() == Date.class) {
+            java.sql.Date date = resultSet.getDate(typeData.getColumnName());
+            field.set(entity, new Date(date.getTime()));
         } else {
             throw new UnsupportedTypeException(typeData.getFieldType());
         }
