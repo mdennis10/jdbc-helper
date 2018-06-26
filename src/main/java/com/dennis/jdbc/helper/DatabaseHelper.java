@@ -62,7 +62,7 @@ public final class DatabaseHelper {
      * @param params - parameters used in sql query
      * @return DatabaseHelper instance
      */
-    public <T> Optional<T> executeQuery(Class<T> clazz, String sql, String... params) {
+    public <T> Optional<T> executeQuery(Class<T> clazz, String sql, Object... params) {
         List<T> result = executeQueryCollection(clazz, sql, params);
         return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.<T>absent();
     }
@@ -76,7 +76,7 @@ public final class DatabaseHelper {
      * @param params - parameters used in sql query
      * @return DatabaseHelper instance
      */
-    public <T> List<T> executeQueryCollection(Class<T> clazz, String sql, String... params) {
+    public <T> List<T> executeQueryCollection(Class<T> clazz, String sql, Object... params) {
         Preconditions.checkArgument(clazz != null, "clazz type not supplied");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql));
 
@@ -105,7 +105,7 @@ public final class DatabaseHelper {
      * @param params - parameters used in sql query
      * @return rows affected
      */
-    public int executeUpdateQuery(String sql, String... params) {
+    public int executeUpdateQuery(String sql, Object... params) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql));
         Optional<Connection> connection;
         synchronized (profile) {
