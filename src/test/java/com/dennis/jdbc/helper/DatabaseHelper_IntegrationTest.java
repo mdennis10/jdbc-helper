@@ -8,10 +8,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.Calendar;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,13 +18,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class DatabaseHelper_IntegrationTest {
     private static String author = "Mario Dennis";
     private final String nameConfig = "myprofile";
+    private final long currentTime = Calendar.getInstance().getTime().getTime();
 
     @BeforeEach
     public void setup() throws SQLException {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            String sql = "CREATE TABLE Book( Author varchar(50))";
+            String sql = "CREATE TABLE Book( Author varchar(50), Created date )";
             Optional<Connection> factory = DbConfigurationUtil.getTestConnection();
             if (!factory.isPresent())
                 return;
@@ -35,9 +34,10 @@ public class DatabaseHelper_IntegrationTest {
             preparedStatement = connection.prepareStatement(sql);
             preparedStatement.executeUpdate();
 
-            String insertTableSQL = "INSERT INTO Book(Author) VALUES(?)";
+            String insertTableSQL = "INSERT INTO Book(Author, Created) VALUES(?,?)";
             preparedStatement = connection.prepareStatement(insertTableSQL);
             preparedStatement.setString(1, author);
+            preparedStatement.setDate(2, new java.sql.Date(currentTime));
             preparedStatement.executeUpdate();
         } finally {
             if (!ConnectionUtil.isClosed(connection))
@@ -94,6 +94,24 @@ public class DatabaseHelper_IntegrationTest {
         int rowsAffected = helper.executeUpdateQuery("INSERT INTO Book(Author) VALUES(?)", author);
         assertTrue(rowsAffected > 0);
         assertTrue(isBookByAuthorExist(author));
+    }
+
+    @Test
+    public void executeQueryDateTest() {
+        Optional<Book> book = DatabaseHelper
+                .getInstance()
+                .executeQuery(Book.class,"SELECT * FROM Book WHERE Created = ?", new Date(currentTime));
+        assertTrue(book.isPresent());
+        Date date = new Date(Calendar.getInstance().getTime().getTime());
+        book = DatabaseHelper
+                .getInstance()
+                .executeQuery(Book.class, "SELECT * FROM Book WHERE Created > PARSEDATETIME(?, 'YYYY-MM-DD')", date);
+        assertTrue(book.isPresent());
+
+        book = DatabaseHelper
+                .getInstance()
+                .executeQuery(Book.class, "SELECT * FROM Book WHERE Created < PARSEDATETIME(?, 'YYYY-MM-DD')", date);
+        assertFalse(book.isPresent());
     }
 
     private boolean isBookByAuthorExist(String author) throws SQLException {

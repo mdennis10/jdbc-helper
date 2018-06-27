@@ -270,7 +270,10 @@ public final class DatabaseHelper {
         } else if(typeData.getFieldType() == Date.class) {
             java.sql.Date date = resultSet.getDate(typeData.getColumnName());
             field.set(entity, new Date(date.getTime()));
-        } else {
+        } else if(typeData.getFieldType() == java.sql.Date.class) {
+            java.sql.Date date = resultSet.getDate(typeData.getColumnName());
+            field.set(entity, date);
+        }else {
             throw new UnsupportedTypeException(typeData.getFieldType());
         }
     }

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.*;
-import java.util.Date;
 
 @Data
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -38,9 +37,11 @@ public final class SQLExecutor {
                 statement.setShort(++index, (Short) param);
             } else if(param.getClass() == Character.class) {
                 statement.setString(++index, String.valueOf(param));
+            } else if(param.getClass() == java.util.Date.class) {
+                throw new UnsupportedTypeException("java.util.Date is not supported use java.sql.Date instead");
             } else if(param.getClass() == Date.class) {
-                statement.setTimestamp(++index, new Timestamp(((Date)param).getTime()));
-            } else if(param.getClass() == Byte.class) {
+                statement.setDate(++index, (Date) param);
+            }else if(param.getClass() == Byte.class) {
                 statement.setByte(++index, (Byte) param);
             } else {
                 throw new UnsupportedTypeException(param.getClass());

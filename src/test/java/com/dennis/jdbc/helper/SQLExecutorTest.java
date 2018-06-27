@@ -10,12 +10,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
-import java.sql.Connection;
-import java.sql.ParameterMetaData;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
-import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
@@ -290,15 +286,15 @@ public class SQLExecutorTest {
         PreparedStatement statement = null;
         try {
             statement = connection.prepareStatement("SELECT * FROM Book where author =?");
-            Date param = new Date();
+            Date param = new Date(System.currentTimeMillis());
             SQLExecutor.parseParameters(statement, param);
             ParameterMetaData metaData = statement.getParameterMetaData();
 
             Field field = JdbcParameterMetaData.class.getDeclaredField("parameters");
             field.setAccessible(true);
             ArrayList<Parameter> params = (ArrayList) field.get(metaData);
-            java.sql.Date date  = params.get(0).getParamValue().getDate();
-            assertEquals(param, new Date(date.getTime()));
+            Date date  = params.get(0).getParamValue().getDate();
+            assertEquals(param.getTime(), date.getTime());
         } catch (SQLException e) {
             if(connection != null && !connection.isClosed()) {
                 connection.close();
