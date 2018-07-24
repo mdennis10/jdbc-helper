@@ -1,6 +1,8 @@
 package com.dennis.jdbc.helper.util;
 
 import com.dennis.jdbc.helper.config.DbConfiguration;
+import com.dennis.jdbc.helper.config.DbConfigurationFactory;
+import com.dennis.jdbc.helper.config.PropertyFileLoader;
 import com.google.common.base.Optional;
 
 import java.sql.Connection;
@@ -35,7 +37,11 @@ public class DbConfigurationUtil {
     }
 
     public static Optional<Connection> getTestConnection() {
-        DbConfiguration config = getTestConfig();
+        return getTestConnection("default");
+    }
+
+    public static Optional<Connection> getTestConnection(String profile) {
+        DbConfiguration config = DbConfigurationFactory.getDbConfiguration(profile);
         try {
             Class.forName(config.getDriverClassName());
             Connection connection = DriverManager.getConnection(

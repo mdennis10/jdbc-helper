@@ -44,9 +44,6 @@ public class DbConfigurationFactory {
      * @author Mario Dennis
      */
     public static DbConfiguration getDbConfiguration() {
-        if (configurationMap == null) {
-            new DbConfigurationFactory();
-        }
         return getDbConfiguration(DEFAULT);
     }
 
@@ -57,6 +54,9 @@ public class DbConfigurationFactory {
      * @author Mario Dennis
      */
     public static DbConfiguration getDbConfiguration(String profile) {
+        if (configurationMap == null) {
+            new DbConfigurationFactory();
+        }
         return configurationMap.get(profile);
     }
 }
