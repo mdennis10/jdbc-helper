@@ -1,6 +1,7 @@
 package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.config.DbConfiguration;
+import com.dennis.jdbc.helper.exception.HelperSqlException;
 import com.google.common.base.Optional;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
@@ -35,8 +36,13 @@ public final class C3p0ConnectionManagerImpl implements ConnectionManager {
                     Optional.of(connection) :
                     Optional.<Connection>absent();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new HelperSqlException(e);
         }
+    }
+
+    @Override
+    public void close() {
+        dataSource.close();
     }
 
     @Override

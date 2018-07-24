@@ -18,7 +18,7 @@ public final class ConnectionManagerFactory {
         RefStreamsUtil.createStream(profiles).forEach(profile -> {
             DbConfiguration config = DbConfigurationFactory.getDbConfiguration(profile);
             if (config == null) return;
-            connectionMap.put(profile, ConnectionManagerFactory.this.createConnectionManager(config));
+            connectionMap.put(profile, createConnectionManager(config));
         });
     }
 
@@ -31,6 +31,23 @@ public final class ConnectionManagerFactory {
             throw new NameConfigNotFoundException(profile);
         }
         return connectionManager;
+    }
+
+    public static void closeConnectionManagers() {
+        if(connectionMap == null || connectionMap.isEmpty()) {
+            return;
+        }
+        connectionMap.entrySet().forEach(con ->
+            con.getValue().close()
+        );
+    }
+
+    public static void closeConnectionManager(String profile) {
+        if(connectionMap == null || connectionMap.isEmpty()) {
+            return;
+        }
+        ConnectionManager connectionManager = connectionMap.get(profile);
+        if(connectionManager != null) connectionManager.close();
     }
 
     private ConnectionManager createConnectionManager(DbConfiguration config) {

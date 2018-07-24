@@ -88,6 +88,7 @@ public class PropertyFileLoader {
             throw e;
         }
     }
+
     protected Set<String> getProfiles(Properties prop) {
         Set<String> propNames = prop.stringPropertyNames();
         final Set<String> profile = new HashSet<String>();

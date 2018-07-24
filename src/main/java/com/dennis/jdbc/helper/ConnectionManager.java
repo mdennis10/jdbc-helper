@@ -18,4 +18,6 @@ public interface ConnectionManager {
     int getMinPoolSize();
 
     int getMaxStatements();
+
+    void close();
 }

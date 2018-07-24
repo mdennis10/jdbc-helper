@@ -1,10 +1,12 @@
 package com.dennis.jdbc.helper.util;
 
+import com.dennis.jdbc.helper.exception.HelperSqlException;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
@@ -17,7 +19,7 @@ public class ConnectionUtil {
         try {
             connection.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new HelperSqlException(e);
         }
     }
 
@@ -27,7 +29,17 @@ public class ConnectionUtil {
         try {
             resultSet.close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new HelperSqlException(e);
+        }
+    }
+
+    public static void close(PreparedStatement statement) {
+        if(statement == null)
+            return;
+        try {
+            statement.close();
+        } catch (SQLException e) {
+            throw new HelperSqlException(e);
         }
     }
 
@@ -37,7 +49,7 @@ public class ConnectionUtil {
         try {
             return connection.isClosed();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new HelperSqlException(e);
         }
     }
 
@@ -47,8 +59,7 @@ public class ConnectionUtil {
         try {
             return resultSet.isClosed();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            throw new HelperSqlException(e);
         }
     }
-
 }
