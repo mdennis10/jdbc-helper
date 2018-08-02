@@ -87,7 +87,6 @@ public abstract class AbstractDatabaseHelper {
         if(executionResult == null) {
             return;
         }
-
         ExecutionResult result = new ExecutionResult(
             executionResult.getConnection(),
             executionResult.getPreparedStatement(),

@@ -63,8 +63,7 @@ public class Transaction extends AbstractDatabaseHelper {
             executionResult = executor.execute(connection, sql, params);
             result = parseEntity(executionResult.getResultSet(), clazz);
         } finally {
-            ConnectionUtil.close(executionResult.getPreparedStatement());
-            ConnectionUtil.close(executionResult.getResultSet());
+            close(executionResult);
         }
         return result;
     }
