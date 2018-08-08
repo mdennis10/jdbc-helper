@@ -27,8 +27,10 @@ public final class C3p0ConnectionManagerImpl implements ConnectionManager {
 
             c3p0.setMinPoolSize(config.getMinPoolSize());
             c3p0.setMaxPoolSize(config.getMaxPoolSize());
+            c3p0.setInitialPoolSize(config.getMinPoolSize());
             dataSource = c3p0;
         } catch (PropertyVetoException e) {
+            LOGGER.severe(e.getMessage());
             throw new InternalHelperException(e);
         }
     }
@@ -41,6 +43,7 @@ public final class C3p0ConnectionManagerImpl implements ConnectionManager {
                     Optional.of(connection) :
                     Optional.empty();
         } catch (SQLException e) {
+            LOGGER.severe(e.getMessage());
             throw new HelperSQLException(e);
         }
     }

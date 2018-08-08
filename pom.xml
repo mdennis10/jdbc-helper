@@ -154,7 +154,8 @@
             <resource>
                 <directory>src/main/resource</directory>
                 <excludes>
-                    <exclude>**/*.properties</exclude>
+                    <!--<exclude>**/*.properties</exclude>-->
+                    <exclude>jdbc-application.properties</exclude>
                 </excludes>
             </resource>
         </resources>
