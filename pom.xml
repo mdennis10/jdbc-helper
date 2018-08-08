@@ -58,31 +58,6 @@
             <artifactId>c3p0</artifactId>
             <version>0.9.5.2</version>
         </dependency>
-        <dependency>
-            <groupId>net.sourceforge.streamsupport</groupId>
-            <artifactId>streamsupport</artifactId>
-            <version>${stream.support.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.streamsupport</groupId>
-            <artifactId>streamsupport-cfuture</artifactId>
-            <version>${stream.support.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.streamsupport</groupId>
-            <artifactId>streamsupport-atomic</artifactId>
-            <version>${stream.support.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.streamsupport</groupId>
-            <artifactId>streamsupport-flow</artifactId>
-            <version>${stream.support.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>net.sourceforge.streamsupport</groupId>
-            <artifactId>streamsupport-literal</artifactId>
-            <version>${stream.support.version}</version>
-        </dependency>
     </dependencies>
     <licenses>
         <license>

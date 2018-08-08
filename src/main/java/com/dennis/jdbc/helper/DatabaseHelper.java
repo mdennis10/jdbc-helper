@@ -1,18 +1,23 @@
 package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.exception.ConnectionException;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import java.sql.Connection;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.Optional;
 
 public final class DatabaseHelper extends AbstractDatabaseHelper {
     private final String profile;
     private final SQLExecutor executor;
+    private static final Logger LOGGER = Logger.getLogger(DatabaseHelper.class.getName());
 
     private DatabaseHelper(String profile) {
+        super(DatabaseHelper.class);
+        LOGGER.setLevel(Level.WARNING);
         this.profile = profile;
         this.executor = new SQLExecutor();
     }
@@ -50,7 +55,7 @@ public final class DatabaseHelper extends AbstractDatabaseHelper {
      */
     public <T> Optional<T> executeQuery(Class<T> clazz, String sql, Object... params) {
         List<T> result = executeQueryCollection(clazz, sql, params);
-        return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.<T>absent();
+        return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.empty();
     }
 
     /**
@@ -71,8 +76,11 @@ public final class DatabaseHelper extends AbstractDatabaseHelper {
             .getConnectionManager(profile)
             .getConnection();
 
-        if (!connection.isPresent())
-            throw new ConnectionException();
+        if (!connection.isPresent()) {
+            ConnectionException exception = new ConnectionException();
+            LOGGER.severe(exception.getMessage());
+            throw exception;
+        }
         ExecutionResult result = null;
         List<T> data;
         try {
@@ -98,8 +106,11 @@ public final class DatabaseHelper extends AbstractDatabaseHelper {
             .getConnectionManager(profile)
             .getConnection();
 
-        if (!connection.isPresent())
-            throw new ConnectionException();
+        if (!connection.isPresent()) {
+            ConnectionException exception = new ConnectionException();
+            LOGGER.severe(exception.getMessage());
+            throw exception;
+        }
         UpdateExecutionResult result = null;
         try {
             result = executor.executeUpdate(connection.get(), sql, params);
@@ -109,7 +120,11 @@ public final class DatabaseHelper extends AbstractDatabaseHelper {
         return result != null ? result.getRowsAffected() : 0;
     }
 
-    public void cleanUp() {
+    /**
+     * Close connection resources
+     * @author Mario Dennis
+     */
+    public void cleanup() {
         ConnectionManagerFactory.closeConnectionManagers();
     }
 

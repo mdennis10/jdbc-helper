@@ -3,7 +3,7 @@ package com.dennis.jdbc.helper;
 import com.dennis.jdbc.helper.exception.ConnectionException;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
 import com.dennis.jdbc.helper.util.DbConfigurationUtil;
-import com.google.common.base.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 

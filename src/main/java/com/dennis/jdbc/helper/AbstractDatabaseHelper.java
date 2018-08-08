@@ -1,12 +1,8 @@
 package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.annotation.TypeData;
-import com.dennis.jdbc.helper.exception.ConnectionException;
-import com.dennis.jdbc.helper.exception.HelperSqlException;
-import com.dennis.jdbc.helper.exception.NoColumnAnnotationException;
-import com.dennis.jdbc.helper.exception.UnsupportedTypeException;
+import com.dennis.jdbc.helper.exception.*;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
-import com.dennis.jdbc.helper.util.RefStreamsUtil;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
@@ -16,11 +12,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractDatabaseHelper {
-    protected AbstractDatabaseHelper() { }
+    private final Logger LOGGER;
+    protected AbstractDatabaseHelper(Class<?> clazz) {
+        Preconditions.checkNotNull(clazz);
+        LOGGER = Logger.getLogger(clazz.getName());
+        LOGGER.setLevel(Level.WARNING);
+    }
 
-    protected <T> String convertParamToString(Class<T> clazz, T entity, TypeData typeData) {
+    <T> String convertParamToString(Class<T> clazz, T entity, TypeData typeData) {
         try {
             Field field = clazz.getDeclaredField(typeData.getFieldName());
             field.setAccessible(true);
@@ -56,16 +59,14 @@ public abstract class AbstractDatabaseHelper {
                     field.getType() == Byte.class) {
                 return field.get(entity).toString();
             } else {
-                throw new UnsupportedTypeException(field.getType());
+                UnsupportedTypeException exception = new UnsupportedTypeException(field.getType());
+                LOGGER.warning(exception.getMessage());
+                throw exception;
             }
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (IllegalAccessException | NullPointerException | NoSuchFieldException e) {
+            LOGGER.warning(e.getMessage());
+            return null;
         }
-        return null;
     }
 
     protected void close(ExecutionResult executionResult) {
@@ -79,7 +80,8 @@ public abstract class AbstractDatabaseHelper {
             if (executionResult.getResultSet() != null)
                 executionResult.getResultSet().close();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -95,40 +97,38 @@ public abstract class AbstractDatabaseHelper {
         close(result);
     }
 
-    protected <T> List<T> parseEntity(final ResultSet resultSet, Class<T> clazz) {
+    <T> List<T> parseEntity(final ResultSet resultSet, Class<T> clazz) {
         if (resultSet == null)
-            return new ArrayList<T>();
+            return new ArrayList<>();
         if (ConnectionUtil.isClosed(resultSet))
             throw new ConnectionException();
-        List<T> result = new ArrayList<T>();
+        List<T> result = new ArrayList<>();
         List<TypeData> typeDataList = AnnotationParser.getColumnNames(clazz);
         // likely no column annotation defined
         // therefore unable to parse entity
         if (typeDataList.isEmpty()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append(clazz.getSimpleName());
-            builder.append(" does not contain any Column annotation");
-            throw new NoColumnAnnotationException(builder.toString());
+            String builder = clazz.getSimpleName() + " does not contain any Column annotation";
+            NoColumnAnnotationException exception =  new NoColumnAnnotationException(builder);
+            LOGGER.warning(exception.getMessage());
+            throw exception;
         }
         try {
             while (resultSet.next()) {
                 final T entity = clazz.newInstance();
-                RefStreamsUtil
-                        .createStream(typeDataList)
-                        .forEach(typeData -> setField(resultSet, entity, typeData));
+                typeDataList.forEach(typeData -> setField(resultSet, entity, typeData));
                 result.add(entity);
             }
             return result;
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
+        } catch (IllegalAccessException | InstantiationException e) {
+            LOGGER.warning(e.getMessage());
+            throw new InternalHelperException(e);
         }
     }
 
-    protected <T> void setField(ResultSet resultSet, T entity, TypeData typeData) {
+    <T> void setField(ResultSet resultSet, T entity, TypeData typeData) {
         Preconditions.checkNotNull(resultSet);
         Preconditions.checkNotNull(entity);
         Preconditions.checkNotNull(typeData);
@@ -136,16 +136,15 @@ public abstract class AbstractDatabaseHelper {
             Field field = entity.getClass().getDeclaredField(typeData.getFieldName());
             field.setAccessible(true);
             setValue(field, resultSet, entity, typeData);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            LOGGER.warning(e.getMessage());
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
-    private <T> void setValue(Field field, ResultSet resultSet, T entity, TypeData typeData) throws NoSuchFieldException, IllegalAccessException, SQLException {
+    private <T> void setValue(Field field, ResultSet resultSet, T entity, TypeData typeData) throws IllegalAccessException, SQLException {
         if (typeData.getFieldType() == String.class) {
             String value = resultSet.getString(typeData.getColumnName());
             field.set(entity, value);
@@ -182,7 +181,9 @@ public abstract class AbstractDatabaseHelper {
             java.sql.Date date = resultSet.getDate(typeData.getColumnName());
             field.set(entity, date);
         }else {
-            throw new UnsupportedTypeException(typeData.getFieldType());
+            UnsupportedTypeException exception = new UnsupportedTypeException(typeData.getFieldType());
+            LOGGER.warning(exception.getMessage());
+            throw exception;
         }
     }
 }

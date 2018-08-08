@@ -1,20 +1,25 @@
 package com.dennis.jdbc.helper;
 
-import com.dennis.jdbc.helper.exception.HelperSqlException;
+import com.dennis.jdbc.helper.exception.HelperSQLException;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
-import com.google.common.base.Optional;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.Optional;
 
 public class Transaction extends AbstractDatabaseHelper {
     private final SQLExecutor executor;
     private final Connection connection;
+    private static final Logger LOGGER = Logger.getLogger(Transaction.class.getName());
 
     private Transaction(String profile) {
+        super(Transaction.class);
+        LOGGER.setLevel(Level.WARNING);
         this.executor = new SQLExecutor();
         this.connection = ConnectionManagerFactory
             .getConnectionManager(profile)
@@ -41,7 +46,7 @@ public class Transaction extends AbstractDatabaseHelper {
      */
     public <T> Optional<T> executeQuery(Class<T> clazz, String sql, Object... params) {
         List<T> result = executeQueryCollection(clazz, sql, params);
-        return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.absent();
+        return !result.isEmpty() ? Optional.of(result.get(0)) : Optional.empty();
     }
 
     /**
@@ -92,7 +97,8 @@ public class Transaction extends AbstractDatabaseHelper {
         try {
             connection.setAutoCommit(isAutoCommit);
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -102,7 +108,8 @@ public class Transaction extends AbstractDatabaseHelper {
         try {
             this.connection.rollback();
         } catch (SQLException e){
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -112,7 +119,8 @@ public class Transaction extends AbstractDatabaseHelper {
         try {
             this.connection.commit();
         } catch(SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -130,7 +138,8 @@ public class Transaction extends AbstractDatabaseHelper {
             if (executionResult.getResultSet() != null)
                 executionResult.getResultSet().close();
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 }

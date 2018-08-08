@@ -1,7 +1,6 @@
 package com.dennis.jdbc.helper;
 
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ public class UpdateExecutionResult extends ExecutionResult {
     @Setter(AccessLevel.NONE)
     private int rowsAffected;
 
-    protected UpdateExecutionResult(
+    UpdateExecutionResult(
             Connection connection, PreparedStatement statement,
             ResultSet resultSet, int rowsAffected) {
         super(connection, statement, resultSet);

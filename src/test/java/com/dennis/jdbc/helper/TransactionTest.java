@@ -3,10 +3,11 @@ package com.dennis.jdbc.helper;
 import com.dennis.jdbc.helper.exception.ConnectionException;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
 import com.dennis.jdbc.helper.util.DbConfigurationUtil;
-import com.google.common.base.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import java.sql.*;
 
@@ -87,7 +88,7 @@ public class TransactionTest {
                 book.setAuthor(resultSet.getString("Author"));
                 return Optional.of(book);
             }
-            return Optional.absent();
+            return Optional.empty();
         } finally {
             if (!ConnectionUtil.isClosed(connection))
                 connection.close();

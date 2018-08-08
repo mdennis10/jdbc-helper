@@ -2,7 +2,6 @@ package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.util.ConnectionUtil;
 import com.dennis.jdbc.helper.util.DbConfigurationUtil;
-import com.google.common.base.Optional;
 import org.h2.expression.Parameter;
 import org.h2.jdbc.JdbcParameterMetaData;
 import org.junit.jupiter.api.AfterEach;
@@ -12,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.lang.reflect.Field;
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;

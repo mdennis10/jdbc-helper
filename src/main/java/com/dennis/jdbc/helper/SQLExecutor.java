@@ -1,19 +1,21 @@
 package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.exception.ConnectionException;
-import com.dennis.jdbc.helper.exception.HelperSqlException;
+import com.dennis.jdbc.helper.exception.HelperSQLException;
 import com.dennis.jdbc.helper.exception.UnsupportedTypeException;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
 import com.google.common.base.Preconditions;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.sql.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public final class SQLExecutor {
+    private static final Logger LOGGER = Logger.getLogger(SQLExecutor.class.getName());
+
+    SQLExecutor() {
+        LOGGER.setLevel(Level.WARNING);
+    }
 
     protected static void parseParameters(PreparedStatement statement, Object... params) throws SQLException {
         if (params.length == 0)
@@ -45,35 +47,45 @@ public final class SQLExecutor {
             } else if(param.getClass() == Byte.class) {
                 statement.setByte(index + 1, (Byte) param);
             }  else {
-                throw new UnsupportedTypeException(param.getClass());
+                UnsupportedTypeException exception = new UnsupportedTypeException(param.getClass());
+                LOGGER.severe(exception.getMessage());
+                throw exception;
             }
         }
     }
 
     protected ExecutionResult execute(Connection connection, String sql, Object... params) {
         Preconditions.checkArgument(connection != null, "Connection instance required");
-        if (ConnectionUtil.isClosed(connection))
-            throw new ConnectionException("Connection already closed");
+        if (ConnectionUtil.isClosed(connection)){
+            ConnectionException exception = new ConnectionException("Connection already closed");
+            LOGGER.severe(exception.getMessage());
+            throw exception;
+        }
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             parseParameters(statement, params);
             ResultSet resultSet = statement.executeQuery();
             return new ExecutionResult(connection, statement, resultSet);
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
     protected UpdateExecutionResult executeUpdate(Connection connection, String sql, Object... params) {
         Preconditions.checkArgument(connection != null, "Connection instance required");
-        if (ConnectionUtil.isClosed(connection))
-            throw new ConnectionException("Connection already closed");
+        if (ConnectionUtil.isClosed(connection)) {
+            ConnectionException exception = new ConnectionException("Connection already closed");
+            LOGGER.severe(exception.getMessage());
+            throw exception;
+        }
         try {
             PreparedStatement statement = connection.prepareStatement(sql);
             parseParameters(statement, params);
             return new UpdateExecutionResult(connection, statement,null, statement.executeUpdate());
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 }

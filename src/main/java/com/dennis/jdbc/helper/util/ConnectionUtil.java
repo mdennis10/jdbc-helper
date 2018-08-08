@@ -1,25 +1,29 @@
 package com.dennis.jdbc.helper.util;
 
-import com.dennis.jdbc.helper.exception.HelperSqlException;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import com.dennis.jdbc.helper.exception.HelperSQLException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-@Data
-@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ConnectionUtil {
+    private static final Logger LOGGER;
+    static {
+        LOGGER = Logger.getLogger(ConnectionUtil.class.getName());
+        LOGGER.setLevel(Level.WARNING);
+    }
+
     public static void close(Connection connection) {
         if (isClosed(connection))
             return;
         try {
             connection.close();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -29,7 +33,8 @@ public class ConnectionUtil {
         try {
             resultSet.close();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -39,7 +44,8 @@ public class ConnectionUtil {
         try {
             statement.close();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -49,7 +55,8 @@ public class ConnectionUtil {
         try {
             return connection.isClosed();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 
@@ -59,7 +66,8 @@ public class ConnectionUtil {
         try {
             return resultSet.isClosed();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            LOGGER.severe(e.getMessage());
+            throw new HelperSQLException(e);
         }
     }
 }

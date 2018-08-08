@@ -1,18 +1,23 @@
 package com.dennis.jdbc.helper;
 
 import com.dennis.jdbc.helper.config.DbConfiguration;
-import com.dennis.jdbc.helper.exception.HelperSqlException;
-import com.google.common.base.Optional;
+import com.dennis.jdbc.helper.exception.HelperSQLException;
+import com.dennis.jdbc.helper.exception.InternalHelperException;
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.Optional;
 
 public final class C3p0ConnectionManagerImpl implements ConnectionManager {
+    private static final Logger LOGGER = Logger.getLogger(C3p0ConnectionManagerImpl.class.getName());
     private final ComboPooledDataSource dataSource;
 
-    protected C3p0ConnectionManagerImpl(DbConfiguration config) {
+    C3p0ConnectionManagerImpl(DbConfiguration config) {
+        LOGGER.setLevel(Level.WARNING);
         try {
             ComboPooledDataSource c3p0 = new ComboPooledDataSource();
             c3p0.setDriverClass(config.getDriverClassName()); //loads the jdbc driver
@@ -24,7 +29,7 @@ public final class C3p0ConnectionManagerImpl implements ConnectionManager {
             c3p0.setMaxPoolSize(config.getMaxPoolSize());
             dataSource = c3p0;
         } catch (PropertyVetoException e) {
-            throw new RuntimeException(e);
+            throw new InternalHelperException(e);
         }
     }
 
@@ -34,44 +39,44 @@ public final class C3p0ConnectionManagerImpl implements ConnectionManager {
             Connection connection = dataSource.getConnection();
             return connection != null ?
                     Optional.of(connection) :
-                    Optional.<Connection>absent();
+                    Optional.empty();
         } catch (SQLException e) {
-            throw new HelperSqlException(e);
+            throw new HelperSQLException(e);
         }
     }
 
     @Override
-    public void close() {
+    public void closeConnections() {
         dataSource.close();
     }
 
     @Override
-    public String getDriverClassName() {
+    public synchronized String getDriverClassName() {
         return this.dataSource.getDriverClass();
     }
 
     @Override
-    public String getDatabaseUser() {
+    public synchronized String getDatabaseUser() {
         return this.dataSource.getUser();
     }
 
     @Override
-    public String getJbcUrl() {
+    public synchronized String getJbcUrl() {
         return this.dataSource.getJdbcUrl();
     }
 
     @Override
-    public int getMaxPoolSize() {
+    public synchronized int getMaxPoolSize() {
         return this.dataSource.getMaxPoolSize();
     }
 
     @Override
-    public int getMinPoolSize() {
+    public synchronized int getMinPoolSize() {
         return this.dataSource.getMinPoolSize();
     }
 
     @Override
-    public int getMaxStatements() {
+    public synchronized int getMaxStatements() {
         return this.dataSource.getMaxStatements();
     }
 }
