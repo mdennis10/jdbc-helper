@@ -59,6 +59,11 @@
             <version>0.9.5.2</version>
         </dependency>
     </dependencies>
+    <name>JDBC Helper</name>
+    <url>https://github.com/mdennis10/jdbc-helper</url>
+    <description>
+        Very simple JDBC helper library with ORM capabilities
+    </description>
     <licenses>
         <license>
             <name>MIT license</name>
@@ -155,18 +160,18 @@
                 <version>1.6.3</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <serverId>BE2D1425</serverId>
+                    <serverId>ossrh</serverId>
                     <nexusUrl>https://oss.sonatype.org/</nexusUrl>
                     <autoReleaseAfterClose>true</autoReleaseAfterClose>
                 </configuration>
             </plugin>
         </plugins>
+
         <resources>
             <resource>
                 <directory>src/main/resource</directory>
                 <excludes>
-                    <!--<exclude>**/*.properties</exclude>-->
-                    <exclude>jdbc-application.properties</exclude>
+                    <exclude>**/*.properties</exclude>
                 </excludes>
             </resource>
         </resources>
