@@ -1,11 +1,13 @@
 package com.dennis.jdbc.helper.util;
 
 import com.dennis.jdbc.helper.config.DbConfiguration;
-import com.google.common.base.Optional;
+import com.dennis.jdbc.helper.config.DbConfigurationFactory;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import java.util.Optional;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,7 +37,11 @@ public class DbConfigurationUtil {
     }
 
     public static Optional<Connection> getTestConnection() {
-        DbConfiguration config = getTestConfig();
+        return getTestConnection("default");
+    }
+
+    public static Optional<Connection> getTestConnection(String profile) {
+        DbConfiguration config = DbConfigurationFactory.getDbConfiguration(profile);
         try {
             Class.forName(config.getDriverClassName());
             Connection connection = DriverManager.getConnection(
@@ -45,7 +51,7 @@ public class DbConfigurationUtil {
             );
             return connection != null ?
                     Optional.of(connection) :
-                    Optional.<Connection>absent();
+                    Optional.empty();
         } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         } catch (SQLException e) {

@@ -1,8 +1,7 @@
 package com.dennis.jdbc.helper;
 
-import com.google.common.base.Optional;
-
 import java.sql.Connection;
+import java.util.Optional;
 
 public interface ConnectionManager {
     Optional<Connection> getConnection();
@@ -18,4 +17,6 @@ public interface ConnectionManager {
     int getMinPoolSize();
 
     int getMaxStatements();
+
+    void closeConnections();
 }

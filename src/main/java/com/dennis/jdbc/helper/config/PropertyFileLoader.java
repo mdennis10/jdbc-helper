@@ -1,7 +1,6 @@
 package com.dennis.jdbc.helper.config;
 
 import com.dennis.jdbc.helper.exception.NameConfigNotFoundException;
-import com.dennis.jdbc.helper.util.RefStreamsUtil;
 import com.google.common.base.Optional;
 import com.google.common.base.Splitter;
 import com.google.common.base.Strings;
@@ -13,10 +12,17 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class PropertyFileLoader {
+    private static final Logger LOGGER = Logger.getLogger(PropertyFileLoader.class.getName());
     protected String filename = "jdbc-application.properties";
+
+    public PropertyFileLoader () {
+        LOGGER.setLevel(Level.WARNING);
+    }
 
     protected Optional<Properties> load() {
         InputStream input = getClass().getClassLoader().getResourceAsStream(filename);
@@ -28,13 +34,13 @@ public class PropertyFileLoader {
             }
             return Optional.of(prop);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.severe(e.getMessage());
+            return Optional.absent();
         } catch (NullPointerException e) {
             return Optional.absent();
         } finally {
             close(input);
         }
-        return Optional.absent();
     }
 
     private void close(InputStream input) {
@@ -42,7 +48,8 @@ public class PropertyFileLoader {
             try {
                 input.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                LOGGER.warning(e.getMessage());
+                return;
             }
         }
     }
@@ -64,7 +71,9 @@ public class PropertyFileLoader {
             return Optional.of(config);
         } else {
             if (!getProfiles(prop).contains(profile)) {
-                throw new NameConfigNotFoundException(profile);
+                NameConfigNotFoundException exception = new NameConfigNotFoundException(profile);
+                LOGGER.severe(exception.getMessage());
+                throw exception;
             }
             DbConfiguration config = new DbConfiguration(
                     prop.getProperty(String.format("%s.jdbc.username", profile)),
@@ -85,13 +94,15 @@ public class PropertyFileLoader {
             String value = prop.getProperty(property, Integer.toString(defaultValue));
             return Integer.valueOf(value);
         } catch (NumberFormatException e) {
+            LOGGER.severe(e.getMessage());
             throw e;
         }
     }
+
     protected Set<String> getProfiles(Properties prop) {
         Set<String> propNames = prop.stringPropertyNames();
-        final Set<String> profile = new HashSet<String>();
-        RefStreamsUtil.createStream(propNames).forEach(name -> {
+        final Set<String> profile = new HashSet<>();
+        propNames.forEach(name -> {
             List<String> result = Lists.newArrayList(Splitter.on("jdbc")
                     .trimResults()
                     .split(name)

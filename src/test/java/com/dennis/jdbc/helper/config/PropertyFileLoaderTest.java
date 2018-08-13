@@ -76,7 +76,7 @@ public class PropertyFileLoaderTest {
         when(properties.getProperty("myprofile.jdbc.pool.min-size", "8")).thenReturn("10");
         when(properties.size()).thenReturn(4);
 
-        Set<String> profiles = new HashSet<String>();
+        Set<String> profiles = new HashSet<>();
         profiles.add("default");
         profiles.add("myprofile");
         when(loader.getProfiles(properties)).thenReturn(profiles);

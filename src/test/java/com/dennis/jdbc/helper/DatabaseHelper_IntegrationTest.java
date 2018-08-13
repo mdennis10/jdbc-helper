@@ -3,7 +3,7 @@ package com.dennis.jdbc.helper;
 import com.dennis.jdbc.helper.exception.ConnectionException;
 import com.dennis.jdbc.helper.util.ConnectionUtil;
 import com.dennis.jdbc.helper.util.DbConfigurationUtil;
-import com.google.common.base.Optional;
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.sql.*;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,32 +23,40 @@ public class DatabaseHelper_IntegrationTest {
 
     @BeforeEach
     public void setup() throws SQLException {
-        Connection connection = null;
+        Connection defaultConnection = null;
         PreparedStatement preparedStatement = null;
-        try {
-            String sql = "CREATE TABLE Book( Author varchar(50), Created date )";
-            Optional<Connection> factory = DbConfigurationUtil.getTestConnection();
-            if (!factory.isPresent())
-                return;
-            else
-                connection = factory.get();
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.executeUpdate();
 
-            String insertTableSQL = "INSERT INTO Book(Author, Created) VALUES(?,?)";
-            preparedStatement = connection.prepareStatement(insertTableSQL);
-            preparedStatement.setString(1, author);
-            preparedStatement.setDate(2, new java.sql.Date(currentTime));
-            preparedStatement.executeUpdate();
+        Connection myProfileConnection = null;
+        PreparedStatement myProfileConnectionStatement = null;
+        try {
+            defaultConnection = DbConfigurationUtil.getTestConnection().get();
+            preparedStatement = createBookDatabaseTable(defaultConnection);
+
+            myProfileConnection = DbConfigurationUtil.getTestConnection(nameConfig).get();
+            myProfileConnectionStatement = createBookDatabaseTable(myProfileConnection);
         } finally {
-            if (!ConnectionUtil.isClosed(connection))
-                connection.close();
+            ConnectionUtil.close(defaultConnection);
+            ConnectionUtil.close(myProfileConnection);
 
             if (preparedStatement != null)
                 preparedStatement.close();
+            if(myProfileConnection != null)
+                myProfileConnectionStatement.close();
         }
     }
 
+    private PreparedStatement createBookDatabaseTable(Connection connection) throws SQLException {
+        String sql = "CREATE TABLE Book( Author varchar(50), Created date )";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.executeUpdate();
+
+        String insertTableSQL = "INSERT INTO Book(Author, Created) VALUES(?,?)";
+        preparedStatement = connection.prepareStatement(insertTableSQL);
+        preparedStatement.setString(1, author);
+        preparedStatement.setDate(2, new java.sql.Date(currentTime));
+        preparedStatement.executeUpdate();
+        return preparedStatement;
+    }
 
     @Test
     public void executeQueryUsingConfigFileTest() {
@@ -137,23 +146,29 @@ public class DatabaseHelper_IntegrationTest {
 
     @AfterEach
     public void tearDown() throws SQLException {
+        Connection profileConnection = null;
+        PreparedStatement profilePreparedStatement = null;
+
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         try {
-            String sql = "DROP TABLE Book";
-            Optional<Connection> factory = DbConfigurationUtil.getTestConnection();
-            if (!factory.isPresent())
-                return;
-            else
-                connection = factory.get();
-            preparedStatement = connection.prepareStatement(sql);
-            preparedStatement.executeUpdate();
-        } finally {
-            if (ConnectionUtil.isClosed(connection))
-                connection.close();
+            profileConnection = DbConfigurationUtil.getTestConnection(nameConfig).get();
+            profilePreparedStatement = dropBookDatabaseTable(profileConnection);
 
-            if (preparedStatement != null)
-                preparedStatement.close();
+            connection = DbConfigurationUtil.getTestConnection().get();
+            preparedStatement = dropBookDatabaseTable(connection);
+        } finally {
+            ConnectionUtil.close(profileConnection);
+
+            if (profilePreparedStatement != null)
+                profilePreparedStatement.close();
         }
+    }
+
+    private PreparedStatement dropBookDatabaseTable(Connection connection) throws SQLException {
+        String sql = "DROP TABLE Book";
+        PreparedStatement preparedStatement = connection.prepareStatement(sql);
+        preparedStatement.executeUpdate();
+        return preparedStatement;
     }
 }
