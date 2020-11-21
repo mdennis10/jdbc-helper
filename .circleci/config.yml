@@ -6,5 +6,5 @@ orbs:
 workflows:
   maven_test:
     jobs:
-      - maven/test: # checkout, build, test, and upload test results
-          command: 'clean compile test package'
+      build: # checkout, build, test, and upload test results
+          command: 'mvn clean compile test package'
