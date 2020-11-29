@@ -27,13 +27,13 @@ int result = databaseHelper.executeUpdate(sql, new Object[]{"John", "Doe"});
 
 - JDBC Helper provides support for object relationship mapping to map entity classes.
 ```java
-String sql = "SELECT NAME FROM Person WHERE firstName=?";
-Optional<Person> result = databaseHelper.query(Person.class, sql, new Object[]{"JOHN"});`
+String sql = "SELECT * FROM Person WHERE firstName=?";
+Optional<Person> result = databaseHelper.query(Person.class, sql, new Object[]{"John"});`
 ```
 
 - You can also use a ColumnMapper to map your entity classes.
 ```java
-String sql = "SELECT NAME FROM Person WHERE fistName=?";
+String sql = "SELECT * FROM Person WHERE fistName=?";
 ColumnMapper<Person> mapper = row -> new Person(
       row.get("firstname"),
       row.get("lastname")
