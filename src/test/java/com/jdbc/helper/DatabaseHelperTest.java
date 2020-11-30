@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import javax.sql.DataSource;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,8 +30,9 @@ public class DatabaseHelperTest {
         SqlUtil.executeUpdate(config, "CREATE TABLE Person(name varchar(50))");
     }
 
-    @AfterAll public static void tearDown() throws SQLException, ClassNotFoundException {
+    @AfterAll public static void tearDown() throws SQLException, ClassNotFoundException, IOException {
         SqlUtil.executeUpdate(config, "DROP TABLE Person");
+        new DatabaseHelper(config).close();
     }
 
     @Test void executeUpdate() throws SQLException, ClassNotFoundException {

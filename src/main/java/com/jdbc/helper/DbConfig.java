@@ -2,7 +2,7 @@ package com.jdbc.helper;
 
 import java.util.Objects;
 
-public final class DbConfig {
+public class DbConfig {
     private final String user;
     private final String password;
     private final String url;

@@ -7,18 +7,20 @@ import exception.DatabaseHelperSQLException;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import java.io.Closeable;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public final class DatabaseHelper {
+public final class DatabaseHelper implements Closeable {
     private ConnectionManager connectionManager;
     private final DbConfig config;
     public DatabaseHelper(DbConfig config) {
         this.config = config;
-        this.connectionManager = HikariConnectionManager.getInstance(config);
+        this.connectionManager = HikariConnectionManager.getInstance();
     }
 
     /**
@@ -203,6 +205,16 @@ public final class DatabaseHelper {
         }
     }
 
+    /**
+     * Used at application shutdown to close all active connection pool dataSources.
+     * @author Mario Dennis
+     * @throws IOException
+     */
+    @Override
+    public void close() throws IOException {
+        connectionManager.close();
+    }
+
 
     private void resolveParameters(PreparedStatement preparedStatement, Object[] parameters) throws SQLException {
         for (int x = 0; x < parameters.length; x++) {
@@ -222,4 +234,5 @@ public final class DatabaseHelper {
         }
         return columnMetaData;
     }
+
 }
