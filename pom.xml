@@ -4,10 +4,42 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.github.mdennis10.jdbc_helper</groupId>
+    <groupId>com.github.mdennis10</groupId>
     <artifactId>jdbc-helper</artifactId>
     <version>1.0.1</version>
-
+    <name>JDBC Helper</name>
+    <url>https://github.com/mdennis10/jdbc-helper.git</url>
+    <description>
+        A simple library to make working with JDBC drivers easier.
+    </description>
+    <licenses>
+        <license>
+            <name>BSD 3-Clause license</name>
+            <url>http://www.opensource.org/licenses/mit-license.php</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <developers>
+        <developer>
+            <name>Mario Dennis</name>
+            <email>mdennis876@gmail.com</email>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git:git@github.com:mdennis10/jdbc-helper.git</connection>
+        <developerConnection>scm:git:git@github.com:mdennis10/jdbc-helper.git</developerConnection>
+        <url>git@github.com:mdennis10/jdbc-helper.git</url>
+    </scm>
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
     <properties>
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <junit.platform.version>1.7.0</junit.platform.version>
