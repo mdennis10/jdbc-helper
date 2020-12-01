@@ -7,7 +7,7 @@ A simple library to make working with JDBC drivers easier. JDBC Helper provides 
 - Simple API to execute SQL commands.
 
 ## Usage
-- Create DbConfig instance containing database configuration.
+- Create a DbConfig instance containing database configuration.
 ```java
 DbConfig config = new DbConfig(
     "dbUser",
@@ -17,15 +17,14 @@ DbConfig config = new DbConfig(
 );
 ```
 
-- Instantiate instance of DatabaseHelper class used to execute database commands. JDBC Helper handles
-resource cleanup and internally uses the HikariCP connection pool.
+- A instance of the DatabaseHelper class is used to execute database commands.
 ```java
 DatabaseHelper databaseHelper = new DatabaseHelper(config);
 String sql = "INSERT INTO Person(firstName, lastName) VALUES(?,?)"
 int result = databaseHelper.executeUpdate(sql, new Object[]{"John", "Doe"});
 ```
 
-- JDBC Helper provides support for object relationship mapping to map entity classes.
+- JDBC Helper provides support for object relationship mapping to entity classes.
 ```java
 String sql = "SELECT * FROM Person WHERE firstName=?";
 Optional<Person> result = databaseHelper.query(Person.class, sql, new Object[]{"John"});`
@@ -39,5 +38,11 @@ ColumnMapper<Person> mapper = row -> new Person(
       row.get("lastname")
 );
 Optional<Person> result = databaseHelper.query(sql, new Object[]{"JOHN"}, mapper);
+List<Person> persons = databaseHelper.queryForList(Person.class, "SELECT * FROM Person", new Object[]{});
+```
+- JDBC Helper uses Hikari connection pool internally, therefore resource cleanup is necessary on application shutdown.
+```java
+databaseHelper.close() // should only be called on application shutdown
+
 ```
 
