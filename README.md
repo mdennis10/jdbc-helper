@@ -2,8 +2,8 @@
 A simple library to make working with JDBC drivers easier. JDBC Helper provides the following benefits:
 
 - Very minimal configuration.
-- DataSource management with connection pools.
-- Object Relationship Mapping.
+- Data source management with connection pools.
+- Entity Mapping.
 - Simple API to execute SQL commands.
 
 ## Usage
