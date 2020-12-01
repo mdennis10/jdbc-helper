@@ -1,4 +1,4 @@
-package com.jdbc.helper;
+package com.github.mdennis10.jdbc_helper;
 
 import com.google.common.base.Preconditions;
 

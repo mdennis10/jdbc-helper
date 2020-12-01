@@ -1,11 +1,13 @@
-package com.jdbc.helper;
+package com.github.mdennis10.jdbc_helper;
 
+import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,7 +33,7 @@ class HikariConnectionManagerTest {
                 .forEach(x -> x.close());
     }
 
-    @Test void getDataSource_dataSourceLookUpByDbConfig() {
+    @Test void getDataSource_dataSourceLookUpByDbConfigTest() {
         HikariConnectionManager connectionManager = HikariConnectionManager.getInstance();
         //assert that the same dataSource is return once the correct DbConfig is provided
         assertEquals(
@@ -53,7 +55,7 @@ class HikariConnectionManagerTest {
         assertFalse(dataSource.isClosed());
     }
 
-    @Test void getDataSource_recreateDataSource() {
+    @Test void getDataSource_recreateClosedDataSourcesTest() {
         HikariConnectionManager connectionManager = HikariConnectionManager.getInstance();
         HikariDataSource dataSource = connectionManager.getDataSource(config);
         dataSource.close();
@@ -63,12 +65,31 @@ class HikariConnectionManagerTest {
 
     @Test void close () throws IOException {
         HikariConnectionManager connectionManager = HikariConnectionManager.getInstance();
-        HikariConnectionManager.getInstance();// initialize second dataSource
+        // initialize two dataSource
+        connectionManager.getDataSource(config);
+        connectionManager.getDataSource(config2);
 
-        connectionManager.close();
+        connectionManager.close(); // close all dataSources
         List<HikariDataSource> dataSources = connectionManager.getAllDataSources();
         assertNotNull(dataSources);
         assertEquals(2, dataSources.size());
         assertTrue(dataSources.stream().allMatch(dataSource -> dataSource.isClosed()));
+    }
+
+    //@Test
+    void validateDataSourceAutomaticClosesTest() throws InterruptedException {
+        final long TIMEOUT = TimeUnit.SECONDS.toMillis(20);
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setJdbcUrl(config.getUrl());
+        hikariConfig.setUsername(config.getUser());
+        hikariConfig.setPassword(config.getPassword());
+        hikariConfig.setDriverClassName(config.getDriverClassName());
+        hikariConfig.setMaxLifetime(TIMEOUT);
+        hikariConfig.setIdleTimeout(TIMEOUT);
+        hikariConfig.setMaximumPoolSize(3);
+        hikariConfig.setMinimumIdle(0);
+        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
+        Thread.sleep(TimeUnit.SECONDS.toMillis(60));
+        assertTrue(dataSource.isClosed());
     }
 }

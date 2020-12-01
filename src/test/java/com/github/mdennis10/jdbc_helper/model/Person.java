@@ -1,4 +1,4 @@
-package com.jdbc.helper.model;
+package com.github.mdennis10.jdbc_helper.model;
 
 import java.time.LocalDateTime;
 

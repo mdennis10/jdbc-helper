@@ -1,6 +1,6 @@
-package com.jdbc.helper;
+package com.github.mdennis10.jdbc_helper;
 
-import com.jdbc.helper.model.Person;
+import com.github.mdennis10.jdbc_helper.model.Person;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

@@ -1,9 +1,9 @@
-package com.jdbc.helper;
+package com.github.mdennis10.jdbc_helper;
 
 
+import com.github.mdennis10.jdbc_helper.exception.DatabaseHelperSQLException;
 import com.google.common.base.Preconditions;
 import com.google.common.base.Strings;
-import exception.DatabaseHelperSQLException;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;

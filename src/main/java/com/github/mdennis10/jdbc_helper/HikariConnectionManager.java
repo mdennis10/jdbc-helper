@@ -1,4 +1,4 @@
-package com.jdbc.helper;
+package com.github.mdennis10.jdbc_helper;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
@@ -9,11 +9,15 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.stream.Collectors;
 
+import static java.util.concurrent.TimeUnit.MINUTES;
+
 public class HikariConnectionManager implements ConnectionManager {
     private static final ConcurrentMap<DbConfig, HikariDataSource> dataSources = new ConcurrentHashMap<>();
     private static final HikariConnectionManager INSTANCE = new HikariConnectionManager();
-    private static final int MAX_LIFE_TIME = 4;
-    private static final long IDLE_TIMEOUT = 4;
+    private static final long MAX_LIFE_TIME = MINUTES.toMillis(4);
+    private static final int MIN_IDLE = 0;
+    private static final long IDLE_TIMEOUT = MINUTES.toMillis(4);
+    private static final int MAX_POOL_SIZE = 20;
     private HikariConnectionManager() { }
 
     public static HikariConnectionManager getInstance() {
@@ -25,11 +29,11 @@ public class HikariConnectionManager implements ConnectionManager {
         hikariConfig.setJdbcUrl(config.getUrl());
         hikariConfig.setUsername(config.getUser());
         hikariConfig.setPassword(config.getPassword());
+        hikariConfig.setDriverClassName(config.getDriverClassName());
         hikariConfig.setMaxLifetime(MAX_LIFE_TIME);
         hikariConfig.setIdleTimeout(IDLE_TIMEOUT);
-        hikariConfig.setDriverClassName(config.getDriverClassName());
-        hikariConfig.setMaximumPoolSize(config.getMaxPoolSize());
-        hikariConfig.setMinimumIdle(config.getMinPoolSize());
+        hikariConfig.setMaximumPoolSize(MAX_POOL_SIZE);
+        hikariConfig.setMinimumIdle(MIN_IDLE);
         return new HikariDataSource(hikariConfig);
     }
 
@@ -52,5 +56,4 @@ public class HikariConnectionManager implements ConnectionManager {
     public void close() throws IOException {
         dataSources.entrySet().stream().forEach(x -> x.getValue().close());
     }
-
 }
