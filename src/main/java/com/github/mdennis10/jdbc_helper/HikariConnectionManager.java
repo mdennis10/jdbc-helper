@@ -15,7 +15,7 @@ public final class HikariConnectionManager implements ConnectionManager {
     private static final ConcurrentMap<DbConfig, HikariDataSource> dataSources = new ConcurrentHashMap<>();
     private static final HikariConnectionManager INSTANCE = new HikariConnectionManager();
     private static final long MAX_LIFE_TIME = MINUTES.toMillis(4);
-    private static final int MIN_IDLE = 0;
+    private static final int MIN_IDLE = 5;
     private static final long IDLE_TIMEOUT = MINUTES.toMillis(4);
     private static final int MAX_POOL_SIZE = 30;
     private HikariConnectionManager() { }
