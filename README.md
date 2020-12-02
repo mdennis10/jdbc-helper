@@ -42,7 +42,7 @@ List<Person> persons = databaseHelper.queryForList(Person.class, "SELECT * FROM 
 ```
 - JDBC Helper uses Hikari connection pool internally, therefore resource cleanup is necessary on application shutdown.
 ```java
-databaseHelper.close() // should only be called on application shutdown
+DatabaseHelper.close() // should only be called on application shutdown
 
 ```
 

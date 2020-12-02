@@ -7,7 +7,6 @@ import com.google.common.base.Strings;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
-import java.io.Closeable;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -15,12 +14,12 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 
-public final class DatabaseHelper implements Closeable {
-    private ConnectionManager connectionManager;
+public final class DatabaseHelper {
+    private static ConnectionManager connectionManager;
     private final DbConfig config;
     public DatabaseHelper(DbConfig config) {
         this.config = config;
-        this.connectionManager = HikariConnectionManager.getInstance();
+        connectionManager = HikariConnectionManager.getInstance();
     }
 
     /**
@@ -29,7 +28,7 @@ public final class DatabaseHelper implements Closeable {
      * @param connectionManager - a connection manager instance
      */
     public void setConnectionManager(ConnectionManager connectionManager) {
-        this.connectionManager = connectionManager;
+        DatabaseHelper.connectionManager = connectionManager;
     }
 
     private Connection getConnection(DbConfig config) {
@@ -210,8 +209,9 @@ public final class DatabaseHelper implements Closeable {
      * @author Mario Dennis
      * @throws IOException
      */
-    @Override
-    public void close() throws IOException {
+    public static void close() throws IOException {
+        if(connectionManager == null)
+            return;
         connectionManager.close();
     }
 

@@ -32,7 +32,7 @@ public class DatabaseHelperTest {
 
     @AfterAll public static void tearDown() throws SQLException, ClassNotFoundException, IOException {
         SqlUtil.executeUpdate(config, "DROP TABLE Person");
-        new DatabaseHelper(config).close();
+        DatabaseHelper.close();
     }
 
     @Test void executeUpdate() throws SQLException, ClassNotFoundException {

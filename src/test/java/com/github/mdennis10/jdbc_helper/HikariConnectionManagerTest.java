@@ -1,13 +1,11 @@
 package com.github.mdennis10.jdbc_helper;
 
-import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -76,20 +74,4 @@ class HikariConnectionManagerTest {
         assertTrue(dataSources.stream().allMatch(dataSource -> dataSource.isClosed()));
     }
 
-    //@Test
-    void validateDataSourceAutomaticClosesTest() throws InterruptedException {
-        final long TIMEOUT = TimeUnit.SECONDS.toMillis(20);
-        HikariConfig hikariConfig = new HikariConfig();
-        hikariConfig.setJdbcUrl(config.getUrl());
-        hikariConfig.setUsername(config.getUser());
-        hikariConfig.setPassword(config.getPassword());
-        hikariConfig.setDriverClassName(config.getDriverClassName());
-        hikariConfig.setMaxLifetime(TIMEOUT);
-        hikariConfig.setIdleTimeout(TIMEOUT);
-        hikariConfig.setMaximumPoolSize(3);
-        hikariConfig.setMinimumIdle(0);
-        HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-        Thread.sleep(TimeUnit.SECONDS.toMillis(60));
-        assertTrue(dataSource.isClosed());
-    }
 }
