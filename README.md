@@ -6,6 +6,24 @@ A simple library to make working with JDBC drivers easier. JDBC Helper provides 
 - Entity Mapping.
 - Simple API to execute SQL commands.
 
+### Gradle
+````
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.github.mdennis10:jdbc-helper:1.0.2'
+}
+````
+### Maven
+```
+<dependency>
+    <groupId>com.github.mdennis10</groupId>
+    <artifactId>jdbc-helper</artifactId>
+    <version>1.0.2</version>
+</dependency>
+```
 ## Usage
 - Create a DbConfig instance containing database configuration.
 ```java
