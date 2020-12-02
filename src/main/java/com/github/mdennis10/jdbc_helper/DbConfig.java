@@ -6,7 +6,7 @@ import com.google.common.base.Strings;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-public class DbConfig {
+public final class DbConfig {
     private final String user;
     private final String password;
     private final String url;
