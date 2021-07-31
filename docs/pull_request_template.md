@@ -10,6 +10,7 @@
 <!--- Please link to the issue here: -->
 
 ## How Has This Been Tested?
+<!--- How was this tested? Put an `x` in all the boxes that apply: -->
 - [ ] Unit Test
 - [ ] Manually Test.
 
