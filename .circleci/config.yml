@@ -2,13 +2,9 @@ version: 2.1
 
 orbs:
   maven: circleci/maven@0.0.12
-  codecov: codecov/codecov@1.0.2
 
 workflows:
   maven_test:
     jobs:
       - maven/test: # checkout, build, test, and upload test results
-          command: 'clean compile test'
-      - codecov/upload
-          file: target/surefire-reports/TEST-com.github.mdennis10.jdbc_helper.DatabaseHelperTest.xml
-          token: eb5a8682-5e7a-4404-b1c0-6e5aacea99e6
+          command: 'clean compile test package'
