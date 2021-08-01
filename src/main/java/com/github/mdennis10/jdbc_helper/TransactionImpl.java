@@ -8,6 +8,7 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Optional;
 
 public class TransactionImpl implements Transaction {
@@ -50,6 +51,11 @@ public class TransactionImpl implements Transaction {
     @Override
     public <T> Optional<T> query(Class<T> clazz, String sql, @NotNull Object[] arguments) {
         return queryExecutor.query(false, connection, clazz, sql, arguments);
+    }
+
+    @Override
+    public <T> List<T> queryForList(Class<T> clazz, String sql, @NotNull Object[] arguments) {
+        return queryExecutor.queryForList(false, connection, clazz, sql, arguments);
     }
 
     @Override

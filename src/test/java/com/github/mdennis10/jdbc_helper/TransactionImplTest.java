@@ -126,4 +126,21 @@ public class TransactionImplTest {
         }
     }
 
+    @Test void queryForList () throws SQLException, ClassNotFoundException {
+        try {
+            assert SqlUtil.executeUpdate(config, "INSERT INTO Person(name) VALUES('JOHN')") > 0;
+            assert SqlUtil.executeUpdate(config, "INSERT INTO Person(name) VALUES('JANE')") > 0;
+            Connection connection = SqlUtil.getConnection(config);
+            Transaction transaction = new TransactionImpl(
+                connection, new UpdateExecutor(), new QueryExecutor()
+            );
+            List<Person> results = transaction.queryForList(Person.class, "SELECT * FROM Person", new Object[]{});
+            transaction.commit();
+            assertNotNull(results);
+            assertFalse(results.isEmpty());
+            assertTrue(results.stream().allMatch(x -> !Strings.isNullOrEmpty(x.getName())));
+        } finally {
+            SqlUtil.executeUpdate(config, "DELETE FROM Person");
+        }
+    }
 }

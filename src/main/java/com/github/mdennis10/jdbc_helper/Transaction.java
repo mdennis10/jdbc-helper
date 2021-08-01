@@ -2,6 +2,7 @@ package com.github.mdennis10.jdbc_helper;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Optional;
 
 public interface Transaction {
@@ -25,6 +26,17 @@ public interface Transaction {
      * @return instance of entity class with result row mapped
      */
     <T> Optional<T> query(@NotNull Class<T> clazz, @NotNull String sql, @NotNull Object[] arguments);
+
+    /**
+     * Query database using given SQL data access statement provided.
+     * @author Mario Dennis
+     * @param clazz - entity class type
+     * @param sql - the SQL query to execute
+     * @param arguments - arguments to bind to the query
+     * @param <T> - entity class
+     * @return rows of results extracted from mapper
+     */
+    <T> List<T> queryForList(@NotNull Class<T> clazz, @NotNull String sql, @NotNull Object[] arguments);
 
     /**
      * Rollback transaction
