@@ -17,6 +17,16 @@ public interface Transaction {
     int executeUpdate(@NotNull String sql, @Nullable Object[] arguments);
 
     /**
+     * Execute a batch update operation (such as an insert, update or delete statement)
+     * using the supplied SQL statement with the batch of supplied arguments.
+     * @author Mario Dennis
+     * @param sql - the SQL query to execute
+     * @param arguments - arguments to bind to the query
+     * @return number of rows affected
+     */
+    int[] executeBatchUpdate(@NotNull String sql, @NotNull List<Object[]> arguments);
+
+    /**
      * Query database using given SQL data access statement provided.
      * @author Mario Dennis
      * @param clazz - entity class type

@@ -41,7 +41,7 @@ public class TransactionImplTest {
         Connection mockConnection = mock(Connection.class);
         UpdateExecutor mockUpdateExecutor = mock(UpdateExecutor.class);
         QueryExecutor mockQueryExecutor = mock(QueryExecutor.class);
-        Transaction transaction = new TransactionImpl(
+        new TransactionImpl(
                 mockConnection, mockUpdateExecutor, mockQueryExecutor
         );
         verify(mockConnection, times(1)).setAutoCommit(false);
@@ -139,6 +139,25 @@ public class TransactionImplTest {
             assertNotNull(results);
             assertFalse(results.isEmpty());
             assertTrue(results.stream().allMatch(x -> !Strings.isNullOrEmpty(x.getName())));
+        } finally {
+            SqlUtil.executeUpdate(config, "DELETE FROM Person");
+        }
+    }
+
+    @Test void executeBatchUpdate() throws SQLException, ClassNotFoundException {
+        try {
+            Connection connection = SqlUtil.getConnection(config);
+            Transaction transaction = new TransactionImpl(
+                    connection, new UpdateExecutor(), new QueryExecutor()
+            );
+            List<Object[]> parameters = new ArrayList<>();
+            parameters.add(new Object [] {"Jane Doe"});
+            parameters.add(new Object [] {"John Doe"});
+            parameters.add(new Object [] {"Jack Doe"});
+            int[] rowsAffected = transaction.executeBatchUpdate("INSERT INTO Person(name) VALUES(?)", parameters);
+            transaction.commit();
+            assertNotNull(rowsAffected);
+            assertEquals(3, rowsAffected.length);
         } finally {
             SqlUtil.executeUpdate(config, "DELETE FROM Person");
         }

@@ -16,7 +16,7 @@ public class TransactionImpl implements Transaction {
     private final UpdateExecutor updateExecutor;
     private final QueryExecutor queryExecutor;
 
-    public TransactionImpl(Connection connection, UpdateExecutor updateExecutor, QueryExecutor queryExecutor) {
+    protected TransactionImpl(Connection connection, UpdateExecutor updateExecutor, QueryExecutor queryExecutor) {
         Preconditions.checkNotNull(connection);
         Preconditions.checkNotNull(updateExecutor);
         this.updateExecutor = updateExecutor;
@@ -46,6 +46,11 @@ public class TransactionImpl implements Transaction {
     public int executeUpdate(String sql, @Nullable Object[] arguments) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
         return updateExecutor.executeUpdate(false, connection, sql, arguments);
+    }
+
+    @Override
+    public int[] executeBatchUpdate(String sql, List<Object[]> arguments) {
+        return updateExecutor.executeBatchUpdate(false, connection, sql, arguments);
     }
 
     @Override
