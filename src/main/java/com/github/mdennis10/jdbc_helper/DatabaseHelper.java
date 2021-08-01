@@ -7,12 +7,8 @@ import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 public final class DatabaseHelper {
@@ -143,25 +139,4 @@ public final class DatabaseHelper {
             return;
         connectionManager.close();
     }
-
-
-    private void resolveParameters(PreparedStatement preparedStatement, Object[] parameters) throws SQLException {
-        for (int x = 0; x < parameters.length; x++) {
-            preparedStatement.setObject(x + 1, parameters[x]);
-        }
-    }
-
-    private Map<String, Object> parseRow(ResultSet resultSet) throws SQLException {
-        Map<String, Object> columnMetaData = new HashMap<>();
-        int column = resultSet.getMetaData().getColumnCount();
-        for (int x = 1; x <= column;x++) {
-            String columnName = resultSet.getMetaData().getColumnName(x);
-            Object columnValue = resultSet.getObject(x);
-            if(columnName != null) {
-                columnMetaData.put(columnName.toUpperCase(), columnValue);
-            }
-        }
-        return columnMetaData;
-    }
-
 }
