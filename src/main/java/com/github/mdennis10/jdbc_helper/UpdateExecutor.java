@@ -29,13 +29,6 @@ public class UpdateExecutor {
         }
     }
 
-    private int executeUpdate(PreparedStatement stmt, Object[] arguments) throws SQLException {
-        if(arguments != null) {
-            ExecutorHelperUtil.resolveParameters(stmt, arguments);
-        }
-        return stmt.executeUpdate();
-    }
-
     protected int[] executeBatchUpdate(boolean isAutoClose, @NotNull Connection connection, @NotNull String sql, @NotNull List<Object[]> arguments) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
         Preconditions.checkNotNull(arguments, "Null arguments argument supplied");
@@ -53,6 +46,14 @@ public class UpdateExecutor {
             throw new DatabaseHelperSQLException(e);
         }
     }
+
+    private int executeUpdate(PreparedStatement stmt, Object[] arguments) throws SQLException {
+        if(arguments != null) {
+            ExecutorHelperUtil.resolveParameters(stmt, arguments);
+        }
+        return stmt.executeUpdate();
+    }
+
 
     private int[] executeBatchUpdate(PreparedStatement stmt, List<Object[]> arguments) throws SQLException  {
         if(arguments.size() == 0) {

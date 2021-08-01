@@ -2,17 +2,14 @@ package com.github.mdennis10.jdbc_helper;
 
 
 import com.github.mdennis10.jdbc_helper.exception.DatabaseHelperSQLException;
-import com.google.common.base.Preconditions;
-import com.google.common.base.Strings;
 
 import javax.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 
 public final class DatabaseHelper {
     private static ConnectionManager connectionManager;
@@ -55,22 +52,7 @@ public final class DatabaseHelper {
      * @return single row of result extracted from mapper
      */
     public <T> Optional<T> query(@NotNull String sql, @NotNull Object[] arguments, @NotNull ColumnMapper<T> mapper) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql),"Null or empty sql argument supplied");
-        Preconditions.checkNotNull(arguments, "Null SQL parameter arguments supplied");
-        Preconditions.checkNotNull(mapper, "Null mapper supplied");
-        try(Connection conn = getConnection(config);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-            resolveParameters(stmt, arguments);
-            try (ResultSet resultSet = stmt.executeQuery()) {
-                while (resultSet.next()) {
-                    T result = mapper.map(parseRow(resultSet));
-                    return (result != null) ? Optional.of(result) : Optional.empty();
-                }
-                return Optional.empty();
-            }
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
+        return queryExecutor.query(true, getConnection(config), sql, arguments, mapper);
     }
 
     /**
@@ -83,23 +65,7 @@ public final class DatabaseHelper {
      * @return instance of entity class with result row mapped
      */
     public <T> Optional<T> query(@NotNull Class<T> clazz,@NotNull String sql, @NotNull Object[] arguments) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
-        Preconditions.checkNotNull(clazz, "Null clazz argument supplied");
-        Preconditions.checkNotNull(arguments,"Null SQL parameter arguments supplied" );
-        try(Connection conn = getConnection(config);
-            PreparedStatement stmt = conn.prepareStatement(sql)){
-            resolveParameters(stmt, arguments);
-            try(ResultSet resultSet = stmt.executeQuery()) {
-                while (resultSet.next()) {
-                    Map<String, Object> dataResult = parseRow(resultSet);
-                    T resolved = ReflectiveTypeResolver.resolve(clazz, dataResult);
-                    return (resolved != null) ? Optional.of(resolved) : Optional.empty();
-                }
-            }
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
-        return Optional.empty();
+        return queryExecutor.query(true, getConnection(config), clazz, sql, arguments);
     }
 
 
@@ -113,23 +79,7 @@ public final class DatabaseHelper {
      * @return rows of results extracted from mapper
      */
     public <T> List<T> queryForList(@NotNull String sql, @NotNull Object[] arguments, ColumnMapper<T> mapper){
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql),"Null or empty sql argument supplied");
-        Preconditions.checkNotNull(arguments, "Null SQL parameter arguments supplied");
-        Preconditions.checkNotNull(mapper, "Null mapper supplied");
-        try (Connection conn = getConnection(config);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            resolveParameters(stmt, arguments);
-            try (ResultSet resultSet = stmt.executeQuery())  {
-                List<T> result = new ArrayList<>();
-                while (resultSet.next()) {
-                    T row = mapper.map(parseRow(resultSet));
-                    result.add(row);
-                }
-                return result;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
+        return queryExecutor.queryForList(true, getConnection(config), sql, arguments, mapper);
     }
 
     /**
@@ -142,23 +92,7 @@ public final class DatabaseHelper {
      * @return rows of results extracted from mapper
      */
     public <T> List<T> queryForList(@NotNull Class<T> clazz, @NotNull String sql, @NotNull Object[] arguments) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql),"Null or empty sql argument supplied");
-        Preconditions.checkNotNull(arguments, "Null SQL parameter arguments supplied");
-        Preconditions.checkNotNull(clazz, "Null clazz argument supplied");
-        try(Connection conn = getConnection(config);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-            resolveParameters(stmt, arguments);
-            try(ResultSet resultSet = stmt.executeQuery()) {
-                List<T> result = new ArrayList<>();
-                while(resultSet.next()) {
-                    Map<String, Object> dataResult = parseRow(resultSet);
-                    result.add(ReflectiveTypeResolver.resolve(clazz, dataResult));
-                }
-                return result;
-            }
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
+        return queryExecutor.queryForList(true, getConnection(config), clazz, sql, arguments);
     }
 
     /**
@@ -170,16 +104,7 @@ public final class DatabaseHelper {
      * @return number of rows affected
      */
     public int executeUpdate(@NotNull String sql, @Nullable Object[] arguments) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
-        try (Connection conn = getConnection(config);
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
-            if(arguments != null) {
-                resolveParameters(stmt, arguments);
-            }
-            return stmt.executeUpdate();
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
+        return updateExecutor.executeUpdate(true, getConnection(config), sql, arguments);
     }
 
     /**
@@ -191,22 +116,7 @@ public final class DatabaseHelper {
      * @return number of rows affected
      */
     public int[] executeBatchUpdate(@NotNull String sql, @NotNull List<Object[]> arguments) {
-        Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
-        Preconditions.checkNotNull(arguments, "Null arguments argument supplied");
-        try(Connection conn = getConnection(config);
-            PreparedStatement stmt = conn.prepareStatement(sql)) {
-            if(arguments.size() == 0) {
-                stmt.addBatch();
-                return stmt.executeBatch();
-            }
-            for(Object[] param : arguments) {
-                resolveParameters(stmt, param);
-                stmt.addBatch();
-            }
-            return stmt.executeBatch();
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e.getMessage());
-        }
+        return updateExecutor.executeBatchUpdate(true, getConnection(config), sql, arguments);
     }
 
     /**
@@ -229,25 +139,4 @@ public final class DatabaseHelper {
             return;
         connectionManager.close();
     }
-
-
-    private void resolveParameters(PreparedStatement preparedStatement, Object[] parameters) throws SQLException {
-        for (int x = 0; x < parameters.length; x++) {
-            preparedStatement.setObject(x + 1, parameters[x]);
-        }
-    }
-
-    private Map<String, Object> parseRow(ResultSet resultSet) throws SQLException {
-        Map<String, Object> columnMetaData = new HashMap<>();
-        int column = resultSet.getMetaData().getColumnCount();
-        for (int x = 1; x <= column;x++) {
-            String columnName = resultSet.getMetaData().getColumnName(x);
-            Object columnValue = resultSet.getObject(x);
-            if(columnName != null) {
-                columnMetaData.put(columnName.toUpperCase(), columnValue);
-            }
-        }
-        return columnMetaData;
-    }
-
 }
