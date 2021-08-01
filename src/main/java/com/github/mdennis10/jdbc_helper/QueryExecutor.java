@@ -24,7 +24,7 @@ public class QueryExecutor {
         Preconditions.checkNotNull(connection, "Null connection provided");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
         Preconditions.checkNotNull(arguments,"Null SQL parameter arguments supplied" );
-        Preconditions.checkNotNull(mapper, "Null mapper argument supplied");
+        Preconditions.checkNotNull(mapper, "Null mapper supplied");
         try {
             if(isAutoClose) {
                 try(Connection conn = connection;
@@ -99,7 +99,7 @@ public class QueryExecutor {
         Preconditions.checkNotNull(connection, "Null connection provided");
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql),"Null or empty sql argument supplied");
         Preconditions.checkNotNull(arguments, "Null SQL parameter arguments supplied");
-        Preconditions.checkNotNull(mapper, "Null mapper argument supplied");
+        Preconditions.checkNotNull(mapper, "Null mapper supplied");
         try {
             if(isAutoClose) {
                 try (Connection conn = connection;
