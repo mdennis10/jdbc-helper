@@ -42,7 +42,7 @@ public class TransactionImplTest {
         UpdateExecutor mockUpdateExecutor = mock(UpdateExecutor.class);
         QueryExecutor mockQueryExecutor = mock(QueryExecutor.class);
         new TransactionImpl(
-                mockConnection, mockUpdateExecutor, mockQueryExecutor
+            mockConnection, mockUpdateExecutor, mockQueryExecutor
         );
         verify(mockConnection, times(1)).setAutoCommit(false);
     }

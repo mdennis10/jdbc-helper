@@ -1,6 +1,7 @@
 package com.github.mdennis10.jdbc_helper;
 
 import com.github.mdennis10.jdbc_helper.model.Person;
+import com.google.common.base.Strings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -490,5 +491,20 @@ public class DatabaseHelperTest {
             () -> databaseHelper.executeBatchUpdate("", new ArrayList<>())
         );
         assertEquals(expected, exception.getMessage());
+    }
+
+    @Test void getTransaction()  {
+        DatabaseHelper databaseHelper = new DatabaseHelper(config);
+        Transaction transaction = databaseHelper.getTransaction();
+        int[] rowsAffected = new int[2];
+        rowsAffected[0] = transaction.executeUpdate("INSERT INTO Person(name) VALUES(?)", new Object[]{"JOHN"});
+        rowsAffected[1] = transaction.executeUpdate("INSERT INTO Person(name) VALUES(?)", new Object[]{"JOHN"});
+        List<Person> persons = transaction.queryForList(Person.class, "SELECT * FROM PERSON", new Object[]{});
+        transaction.commit();
+        assertEquals(1, rowsAffected[0]);
+        assertEquals(1, rowsAffected[1]);
+        assertNotNull(persons);
+        assertFalse(persons.isEmpty());
+        assertTrue(persons.stream().allMatch(x -> !Strings.isNullOrEmpty(x.getName())));
     }
 }

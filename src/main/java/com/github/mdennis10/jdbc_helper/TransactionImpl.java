@@ -25,7 +25,7 @@ public class TransactionImpl implements Transaction {
         disableAutoCommit();
     }
 
-    public synchronized void disableAutoCommit() {
+    private synchronized void disableAutoCommit() {
         try {
             connection.setAutoCommit(false);
         } catch (SQLException e) {
@@ -37,6 +37,16 @@ public class TransactionImpl implements Transaction {
     public synchronized void rollback() {
         try {
             connection.rollback();
+        } catch (SQLException e) {
+            throw new DatabaseHelperSQLException(e);
+        }
+    }
+
+    @Override
+    public synchronized void commit() {
+        try {
+            connection.commit();
+            connection.close();
         } catch (SQLException e) {
             throw new DatabaseHelperSQLException(e);
         }
@@ -61,15 +71,5 @@ public class TransactionImpl implements Transaction {
     @Override
     public <T> List<T> queryForList(Class<T> clazz, String sql, @NotNull Object[] arguments) {
         return queryExecutor.queryForList(false, connection, clazz, sql, arguments);
-    }
-
-    @Override
-    public synchronized void commit() {
-        try {
-            connection.commit();
-            connection.close();
-        } catch (SQLException e) {
-            throw new DatabaseHelperSQLException(e);
-        }
     }
 }
