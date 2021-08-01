@@ -11,35 +11,28 @@ import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
 public class UpdateExecutor {
-    protected int executeUpdate(boolean isAutoClose, @NotNull Connection connection, @NotNull String sql, @Nullable Object[] arguments) {
+    protected int executeUpdate (boolean isAutoClose, @NotNull Connection connection, @NotNull String sql, @Nullable Object[] arguments) {
         Preconditions.checkArgument(!Strings.isNullOrEmpty(sql), "Null or empty sql argument supplied");
-        if(isAutoClose) {
-            try (Connection conn = connection;
-                 PreparedStatement stmt = conn.prepareStatement(sql)) {
-                if(arguments != null) {
-                    resolveParameters(stmt, arguments);
+        try {
+            if(isAutoClose) {
+                try (Connection conn = connection;
+                     PreparedStatement stmt = conn.prepareStatement(sql)) {
+                    return execute(stmt, arguments);
                 }
-                return stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new DatabaseHelperSQLException(e);
+            } else {
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                return execute(stmt, arguments);
             }
-        } else {
-            try {
-                Connection conn = connection;
-                PreparedStatement stmt = conn.prepareStatement(sql);
-                if(arguments != null) {
-                    resolveParameters(stmt, arguments);
-                }
-                return stmt.executeUpdate();
-            } catch (SQLException e) {
-                throw new DatabaseHelperSQLException(e);
-            }
+        } catch (SQLException e) {
+            throw new DatabaseHelperSQLException(e);
         }
     }
 
-    private void resolveParameters(PreparedStatement preparedStatement, Object[] parameters) throws SQLException {
-        for (int x = 0; x < parameters.length; x++) {
-            preparedStatement.setObject(x + 1, parameters[x]);
+    private int execute (PreparedStatement stmt, Object[] arguments) throws SQLException {
+        if(arguments != null) {
+            ExecutorHelperUtil.resolveParameters(stmt, arguments);
         }
+        return stmt.executeUpdate();
     }
+
 }
