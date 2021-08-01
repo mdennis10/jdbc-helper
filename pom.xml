@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.github.mdennis10</groupId>
     <artifactId>jdbc-helper</artifactId>
-    <version>2.1.4</version>
+    <version>2.1.5</version>
     <properties>
         <junit.jupiter.version>5.7.0</junit.jupiter.version>
         <junit.platform.version>1.7.0</junit.platform.version>
