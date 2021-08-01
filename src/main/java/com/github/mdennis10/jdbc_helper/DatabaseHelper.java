@@ -17,9 +17,14 @@ import java.util.*;
 public final class DatabaseHelper {
     private static ConnectionManager connectionManager;
     private final DbConfig config;
+    private final UpdateExecutor updateExecutor;
+    private final QueryExecutor queryExecutor;
+
     public DatabaseHelper(DbConfig config) {
         this.config = config;
-        connectionManager = HikariConnectionManager.getInstance();
+        this.connectionManager = HikariConnectionManager.getInstance();
+        this.updateExecutor = new UpdateExecutor();
+        this.queryExecutor = new QueryExecutor();
     }
 
     /**
@@ -202,6 +207,16 @@ public final class DatabaseHelper {
         } catch (SQLException e) {
             throw new DatabaseHelperSQLException(e.getMessage());
         }
+    }
+
+    /**
+     * Get transaction instance used for executing transactional
+     * operations
+     * @author Mario Dennis
+     * @return Transaction
+     */
+    public Transaction getTransaction() {
+        return new TransactionImpl(getConnection(config), updateExecutor, queryExecutor);
     }
 
     /**

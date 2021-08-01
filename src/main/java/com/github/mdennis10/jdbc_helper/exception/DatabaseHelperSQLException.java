@@ -4,4 +4,8 @@ public class DatabaseHelperSQLException extends RuntimeException {
     public DatabaseHelperSQLException(String message) {
         super(message);
     }
+
+    public DatabaseHelperSQLException(Throwable throwable) {
+        super(throwable);
+    }
 }

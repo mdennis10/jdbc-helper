@@ -19,4 +19,13 @@ public class SqlUtil {
             if(stmt != null) stmt.close();
         }
     }
+
+    public static Connection getConnection (DbConfig config) throws ClassNotFoundException, SQLException {
+        Class.forName(config.getDriverClassName());
+        return DriverManager.getConnection(
+            config.getUrl(),
+            config.getUser(),
+            config.getPassword()
+        );
+    }
 }
